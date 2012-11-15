@@ -32,10 +32,6 @@
 	     '("marmalade" . "http://marmalade-repo.org/packages/"))
 (package-initialize)
 
-;; configure file management 
-(require 'dired-x)
-(global-set-key (kbd "C-x C-n") 'find-name-dired)
-
 (require 'ido)
 (setq ido-enable-flex-matching t)
 (ido-mode t)
@@ -51,3 +47,9 @@
       (message "Opening file...")
     (message "Aborting")))
 (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
+
+(require 'dired-x)
+(global-set-key (kbd "C-x C-n") 'find-name-dired)
+
+;; load sub-configurations
+(load-library "~/.emacs.d/config/config-mark-multiple.el")
