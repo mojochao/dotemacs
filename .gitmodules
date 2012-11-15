@@ -1,0 +1,3 @@
+[submodule "vendor/mark-multiple"]
+	path = vendor/mark-multiple
+	url = https://github.com/magnars/mark-multiple.el.git
