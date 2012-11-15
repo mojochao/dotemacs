@@ -26,6 +26,13 @@
 (tooltip-mode -1)                       ; hide tool tips
 (fset 'yes-or-no-p 'y-or-n-p)           ; use shortcuts for all yes/no prompts
 
+;; configure elisp repositories
+(require 'package)
+(add-to-list 'package-archives
+	     '("marmalade" . "http://marmalade-repo.org/packages/"))
+(package-initialize)
+
+;; configure file management 
 (require 'dired-x)
 (global-set-key (kbd "C-x C-n") 'find-name-dired)
 
@@ -43,11 +50,4 @@
   (if (find-file (ido-completing-read "Find recent file: " recentf-list))
       (message "Opening file...")
     (message "Aborting")))
-
 (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
-
-
-;; (defconst ace-jump-mode-package-path (concat elisp-packages-path "/ace-jump-mode"))
-;; (add-to-list 'load-path ace-jump-mode-package-path)
-;; (require 'ace-jump-mode)
-;; (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
