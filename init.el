@@ -1,28 +1,26 @@
-;; configure customization data to be persisted outside of the .emacs file
+;; Turn off mouse interface early in startup to avoid momentary display
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
+;; No splash screen please or scratch buffer content
+(setq inhibit-startup-message t)
+(setq initial-scratch-message nil)
+
+;; configure customization data to be persisted outside of the .emacs file
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror)
 
 ;; configure backups to be persisted outside of source directories when editing
-
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 
-;; configure stfu
-
-(setq inhibit-startup-message t)
-(setq initial-scratch-message nil)
-
 ;; configure global ui settings
-
 (setq frame-title-format '("%S" (buffer-file-name "%f" (dired-directory dired-directory "%b")))) ; display full path of active buffer in window title area
 (setq eval-expression-print-length nil) ; prevent emacs truncation of messages in the echo area
 (setq visible-bell t)                   ; flash frame instead of audible bell on error
 (setq column-number-mode t)             ; show column numbers in modeline
 (setq line-number-mode t)               ; show line numbers in modeline
 (delete-selection-mode 1)               ; delete marked region and replace with new content
-(scroll-bar-mode -1)                    ; hide scroll bars
-(menu-bar-mode -1)                      ; hide menu bar
-(tool-bar-mode -1)                      ; hide tool bar
 (tooltip-mode -1)                       ; hide tool tips
 (fset 'yes-or-no-p 'y-or-n-p)           ; use shortcuts for all yes/no prompts
 
@@ -53,3 +51,4 @@
 
 ;; load sub-configurations
 (load-library "~/.emacs.d/config/config-mark-multiple.el")
+(load-library "~/.emacs.d/config/config-programming-modes.el")
