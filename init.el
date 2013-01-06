@@ -49,6 +49,14 @@
 (require 'dired-x)
 (global-set-key (kbd "C-x C-n") 'find-name-dired)
 
+(define-key global-map [home] 'beginning-of-line)
+(define-key global-map [end] 'end-of-line)
+
 ;; load sub-configurations
 (load-library "~/.emacs.d/config/config-mark-multiple.el")
-(load-library "~/.emacs.d/config/config-programming-modes.el")
+(load-library "~/.emacs.d/config/config-prog-all.el")
+(load-library "~/.emacs.d/config/config-prog-css.el")
+(load-library "~/.emacs.d/config/config-prog-html.el")
+(load-library "~/.emacs.d/config/config-prog-coffeescript.el")
+(load-library "~/.emacs.d/config/config-prog-javascript.el")
+(load-library "~/.emacs.d/config/config-prog-xml.el")
