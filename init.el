@@ -1,4 +1,4 @@
-   cc  ;; This configuration is intended for use with Emacs 24.3 or later.
+;; This configuration is intended for use with Emacs 24.3 or later.
 
 (set-frame-height (selected-frame) 60)
 (set-frame-width (selected-frame) 200)
