@@ -43,6 +43,7 @@
 
 (defvar vendor-packages '(js2-mode
 			  magit
+			  web-mode
 			  yasnippet
 			  zenburn-theme)
   "A list of external packages to ensure are installed at launch.")
@@ -146,10 +147,13 @@ Then move to that line and indent accordning to mode"
 ;;
 ;;------------------------------------------------------------------------------
 
-(add-hook 'html-mode-hook 'my-run-pmh-if-not-ran)
-(defun my-run-pmh-if-not-ran ()
-  (unless (bound-and-true-p my-pmh-ran)
-    (run-hooks 'prog-mode-hook)))
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+
+;; (add-hook 'html-mode-hook 'my-run-pmh-if-not-ran)
+;; (defun my-run-pmh-if-not-ran ()
+;;   (unless (bound-and-true-p my-pmh-ran)
+;;     (run-hooks 'prog-mode-hook)))
 
 ;;------------------------------------------------------------------------------
 ;;
