@@ -130,6 +130,7 @@ Then move to that line and indent accordning to mode"
 (add-hook 'prog-mode-hook (lambda () 
 			    (hl-line-mode 1)
 			    (linum-mode 1)
+			    (show-paren-mode)
 			    (yas-minor-mode)))
 
 ;; add buffer-local indicator for whether prog-mode-hook has run, to work around
@@ -140,6 +141,16 @@ Then move to that line and indent accordning to mode"
   (set (make-local-variable 'my-pmh-ran) t))
 
 (add-hook 'prog-mode-hook 'my-set-pmh-ran)
+
+;;------------------------------------------------------------------------------
+;;
+;; C++ IDE
+;;
+;;------------------------------------------------------------------------------
+
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+(add-hook 'c++-mode-hook (lambda ()
+			   (c-set-style "stroustrup")))
 
 ;;------------------------------------------------------------------------------
 ;;
