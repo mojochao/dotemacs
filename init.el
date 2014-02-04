@@ -151,7 +151,8 @@ Then move to that line and indent accordning to mode"
 
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 (add-hook 'c++-mode-hook (lambda ()
-			   (c-set-style "stroustrup")))
+			   (c-set-style "stroustrup")
+			   (setq indent-tabs-mode t)))
 
 ;;------------------------------------------------------------------------------
 ;;
@@ -176,9 +177,9 @@ Then move to that line and indent accordning to mode"
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
 (add-hook 'js2-mode-hook (lambda () 
-			   (setq indent-tabs-mode nil)
-			   (setq js2-basic-offset 2)  
-			   (setq js2-bounce-indent-p t)))
+			   (setq js-indent-level 2)
+			   (setq js2-indent-level 2)
+			   (setq js2-basic-offset 2)))
 (add-hook 'js2-mode-hook 'my-run-pmh-if-not-ran)
 
 (defun my-run-pmh-if-not-ran ()
