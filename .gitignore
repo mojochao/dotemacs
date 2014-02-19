@@ -3,5 +3,6 @@ custom.el
 backups
 elpa
 server
+smex.save
 url
 

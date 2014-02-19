@@ -44,6 +44,7 @@
 (defvar vendor-packages '(js2-mode
 			  magit
 			  plantuml-mode
+			  smex
 			  web-mode
 			  yasnippet
 			  zenburn-theme)
@@ -78,6 +79,11 @@
 (setq ido-enable-flex-matching t)
 (ido-mode t)
 (ido-everywhere t)
+
+(setq smex-save-file "~/.emacs.d/smex.save")
+(require 'smex)
+(smex-initialize)
+(global-set-key (kbd "M-X") 'smex)
 
 (require 'recentf)
 (recentf-mode t)
