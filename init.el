@@ -10,7 +10,7 @@
 ;;-------------------------------------------------------------------------
 
 ;; Turn off mouse interface early in startup to avoid momentary display
-;(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
@@ -24,6 +24,9 @@
 
 ;; configure backups to be persisted outside of source directories
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+
+;; show filename in window frame
+(setq frame-title-format "%f")
 
 ;;-------------------------------------------------------------------------
 ;;
@@ -43,7 +46,6 @@
 
 (defvar vendor-packages '(js2-mode
 			  magit
-			  plantuml-mode
 			  smex
 			  web-mode
 			  yasnippet
@@ -191,16 +193,3 @@ Then move to that line and indent accordning to mode"
 (defun my-run-pmh-if-not-ran ()
   (unless (bound-and-true-p my-pmh-ran)
     (run-hooks 'prog-mode-hook)))
-
-;;------------------------------------------------------------------------------
-;;
-;; PlantUML IDE
-;;
-;;------------------------------------------------------------------------------
-
-(require 'plantuml-mode)
-(add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode))
-
-(add-hook 'image-mode-hook (lambda ()
-			     (auto-revert-mode 1)
-			     (auto-image-file-mode +1)))
