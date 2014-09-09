@@ -1,8 +1,5 @@
 ;; This configuration is intended for use with Emacs 24.3 or later.
 
-(set-frame-height (selected-frame) 60)
-(set-frame-width (selected-frame) 200)
-
 ;;-------------------------------------------------------------------------
 ;;
 ;; Initial Configuration
@@ -103,7 +100,7 @@
 
 (defun open-line-above ()
   "Open a line above the line the point is at.
-Then move to that line and indent accordning to mode"
+Then move to that line and indent according to mode"
   (interactive)
   (move-beginning-of-line 1)
   (newline)
@@ -112,7 +109,7 @@ Then move to that line and indent accordning to mode"
 
 (defun open-line-below ()
   "Open a line below the line the point is at.
-Then move to that line and indent accordning to mode"
+Then move to that line and indent according to mode"
   (interactive)
   (move-end-of-line 1)
   (newline)
@@ -157,6 +154,7 @@ Then move to that line and indent accordning to mode"
 ;;
 ;;------------------------------------------------------------------------------
 
+(require 'cc-mode)
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 (add-hook 'c++-mode-hook (lambda ()
 			   (c-set-style "stroustrup")
@@ -182,6 +180,7 @@ Then move to that line and indent accordning to mode"
 ;;
 ;;------------------------------------------------------------------------------
 
+(require 'js2-mode)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
 (add-hook 'js2-mode-hook (lambda () 

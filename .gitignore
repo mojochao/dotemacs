@@ -5,4 +5,5 @@ elpa
 server
 smex.save
 url
-
+session.*
+frostbite.el
