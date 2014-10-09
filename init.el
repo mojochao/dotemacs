@@ -48,6 +48,7 @@
 
 (defvar vendor-packages '(js2-mode
 			  magit
+			  slime
 			  smex
 			  slime
 			  web-mode
@@ -207,3 +208,4 @@ Then move to that line and indent according to mode"
 (defun my-run-pmh-if-not-ran ()
   (unless (bound-and-true-p my-pmh-ran)
     (run-hooks 'prog-mode-hook)))
+
