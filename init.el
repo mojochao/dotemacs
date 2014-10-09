@@ -1,7 +1,4 @@
-;; This configuration is intended for use with Emacs 24.3 or later.
-
-(set-frame-height (selected-frame) 60)
-(set-frame-width (selected-frame) 200)
+;;; This configuration is intended for use with Emacs 24.3 or later.
 
 ;;-------------------------------------------------------------------------
 ;;
@@ -46,6 +43,7 @@
 
 (defvar vendor-packages '(js2-mode
 			  magit
+			  slime
 			  smex
 			  web-mode
 			  yasnippet
