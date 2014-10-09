@@ -25,6 +25,11 @@
 ;; show filename in window frame
 (setq frame-title-format "%f")
 
+(setq line-number-mode t)               ; show line numbers in modeline
+(delete-selection-mode 1)               ; delete marked region and replace with new content
+(tooltip-mode -1)                       ; hide tool tips
+(fset 'yes-or-no-p 'y-or-n-p)           ; use shortcuts for all yes/no prompts
+
 ;;-------------------------------------------------------------------------
 ;;
 ;; Emacs Daemon Configuration.  Why would you ever want to kill it anyway?!
@@ -44,6 +49,7 @@
 (defvar vendor-packages '(js2-mode
 			  magit
 			  smex
+			  slime
 			  web-mode
 			  yasnippet
 			  zenburn-theme)
@@ -61,10 +67,12 @@
 (dolist (package vendor-packages)
   (when (not (package-installed-p package))
     (package-install package)))
-(setq line-number-mode t)               ; show line numbers in modeline
-(delete-selection-mode 1)               ; delete marked region and replace with new content
-(tooltip-mode -1)                       ; hide tool tips
-(fset 'yes-or-no-p 'y-or-n-p)           ; use shortcuts for all yes/no prompts
+
+;;------------------------------------------------------------------------------
+;;
+;; Theming
+;;
+;;------------------------------------------------------------------------------
 
 (load-theme 'zenburn)
 
@@ -95,9 +103,6 @@
       (message "Opening file...")
     (message "Aborting")))
 
-(global-set-key (kbd "C-x C-r") 'ido-recentf-open)
-
-
 (defun open-line-above ()
   "Open a line above the line the point is at.
 Then move to that line and indent according to mode"
@@ -115,6 +120,18 @@ Then move to that line and indent according to mode"
   (newline)
   (indent-according-to-mode))
 
+(defun find-file-at-point-with-line()
+  "Find file at point and jump to line number delimited by colon. (main.cpp:23)"
+  (interactive)
+  (setq line-num 0)
+  (save-excursion
+    (search-forward-regexp "[^ ]:" (point-max) t)
+    (if (looking-at "[0-9]+")
+         (setq line-num (string-to-number (buffer-substring (match-beginning 0) (match-end 0))))))
+  (find-file (ffap-guesser))
+  (if (not (equal line-num 0))
+      (goto-line line-num)))
+
 ;;------------------------------------------------------------------------------
 ;;
 ;; Keybindings
@@ -125,6 +142,9 @@ Then move to that line and indent according to mode"
 (define-key global-map [end] 'end-of-line)
 (define-key global-map [C-return] 'open-line-below)
 (define-key global-map [C-S-return] 'open-line-above)
+(define-key global-map [S-f12] 'find-file-at-point)
+(define-key global-map [f12] 'find-file-at-point-with-line)
+(define-key global-map [C-x C-r] 'ido-recentf-open)
 
 ;;------------------------------------------------------------------------------
 ;;
@@ -168,11 +188,6 @@ Then move to that line and indent according to mode"
 
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
-
-;; (add-hook 'html-mode-hook 'my-run-pmh-if-not-ran)
-;; (defun my-run-pmh-if-not-ran ()
-;;   (unless (bound-and-true-p my-pmh-ran)
-;;     (run-hooks 'prog-mode-hook)))
 
 ;;------------------------------------------------------------------------------
 ;;
