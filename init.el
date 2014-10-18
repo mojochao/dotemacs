@@ -7,8 +7,9 @@
 ;;-------------------------------------------------------------------------
 
 ;; Turn off mouse interface early in startup to avoid momentary display
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(if (and (not (eq system-type 'darwin)) (fboundp 'menu-bar-mode)) (menu-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'tooltip-mode) (tooltip-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
 ;; No splash screen please or scratch buffer content
@@ -48,9 +49,7 @@
 
 (defvar vendor-packages '(js2-mode
 			  magit
-			  slime
 			  smex
-			  slime
 			  web-mode
 			  yasnippet
 			  zenburn-theme)
@@ -209,3 +208,12 @@ Then move to that line and indent according to mode"
   (unless (bound-and-true-p my-pmh-ran)
     (run-hooks 'prog-mode-hook)))
 
+
+;;------------------------------------------------------------------------------
+;;
+;; Common Lisp IDE
+;;
+;;------------------------------------------------------------------------------
+
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
+(setq inferior-lisp-program "/usr/local/bin/sbcl")
