@@ -26,9 +26,12 @@
 ;; show filename in window frame
 (setq frame-title-format "%f")
 
+;; No truncation of messages in 'echo' area
+(setq eval-expression-print-length nil)
+
+(setq column-number-mode t)	        ; show line numbers in modeline
 (setq line-number-mode t)               ; show line numbers in modeline
 (delete-selection-mode 1)               ; delete marked region and replace with new content
-(tooltip-mode -1)                       ; hide tool tips
 (fset 'yes-or-no-p 'y-or-n-p)           ; use shortcuts for all yes/no prompts
 
 ;;-------------------------------------------------------------------------
@@ -134,20 +137,6 @@ Then move to that line and indent according to mode"
 
 ;;------------------------------------------------------------------------------
 ;;
-;; Keybindings
-;;
-;;------------------------------------------------------------------------------
-
-(define-key global-map [home] 'beginning-of-line)
-(define-key global-map [end] 'end-of-line)
-(define-key global-map [C-return] 'open-line-below)
-(define-key global-map [C-S-return] 'open-line-above)
-(define-key global-map [S-f12] 'find-file-at-point)
-(define-key global-map [f12] 'find-file-at-point-with-line)
-(define-key global-map [C-x C-r] 'ido-recentf-open)
-
-;;------------------------------------------------------------------------------
-;;
 ;; General IDE
 ;;
 ;;------------------------------------------------------------------------------
@@ -217,3 +206,17 @@ Then move to that line and indent according to mode"
 
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 (setq inferior-lisp-program "/usr/local/bin/sbcl")
+
+;;------------------------------------------------------------------------------
+;;
+;; Keybindings
+;;
+;;------------------------------------------------------------------------------
+
+(define-key global-map [home] 'beginning-of-line)
+(define-key global-map [end] 'end-of-line)
+(define-key global-map [C-return] 'open-line-below)
+(define-key global-map [C-S-return] 'open-line-above)
+(define-key global-map [S-f12] 'find-file-at-point)
+(define-key global-map [f12] 'find-file-at-point-with-line)
+(define-key global-map [C-x C-g] 'ido-recentf-open)
