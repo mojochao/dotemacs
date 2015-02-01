@@ -20,6 +20,10 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror)
 
+;; configure gnus to use configuration in ~/.emacs.d directory
+(setq gnus-init-file "~/.emacs.d/.gnus.el")
+(setq gnus-save-newsrc-file nil)
+
 ;; configure backups to be persisted outside of source directories
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 
