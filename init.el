@@ -54,9 +54,18 @@
 ;;
 ;;-------------------------------------------------------------------------
 
-(defvar vendor-packages '(js2-mode
+(defvar vendor-packages '(apache-mode
+			  elpy
+			  emmet-mode
+			  helm
+			  helm-projectile
+			  js2-mode
+			  less-css-mode
+			  lorem-ipsum
 			  magit
-			  smex
+			  markdown-mode
+			  projectile
+			  smart-mode-line
 			  web-mode
 			  yasnippet
 			  zenburn-theme)
@@ -65,7 +74,7 @@
 (require 'package)
 
 (add-to-list 'package-archives
-	     '("marmalade" . "http://marmalade-repo.org/packages/") t)
+	     '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 
 (when (not package-archive-contents)
@@ -89,26 +98,12 @@
 ;;
 ;;------------------------------------------------------------------------------
 
-(require 'ido)
-(setq ido-enable-flex-matching t)
-(ido-mode t)
-(ido-everywhere t)
-
-(setq smex-save-file "~/.emacs.d/smex.save")
-(require 'smex)
-(smex-initialize)
-(global-set-key (kbd "M-X") 'smex)
+(define-key global-map [home] 'beginning-of-line)
+(define-key global-map [end] 'end-of-line)
 
 (require 'recentf)
 (recentf-mode t)
 (setq recentf-max-saved-items 50)
-
-(defun ido-recentf-open ()
-  "Use `ido-completing-read' to \\[find-file] a recent file"
-  (interactive)
-  (if (find-file (ido-completing-read "Find recent file: " recentf-list))
-      (message "Opening file...")
-    (message "Aborting")))
 
 (defun open-line-above ()
   "Open a line above the line the point is at.
@@ -119,6 +114,8 @@ Then move to that line and indent according to mode"
   (previous-line)
   (indent-according-to-mode))
 
+(define-key global-map [C-return] 'open-line-below)
+
 (defun open-line-below ()
   "Open a line below the line the point is at.
 Then move to that line and indent according to mode"
@@ -126,6 +123,8 @@ Then move to that line and indent according to mode"
   (move-end-of-line 1)
   (newline)
   (indent-according-to-mode))
+
+(define-key global-map [C-S-return] 'open-line-above)
 
 (defun find-file-at-point-with-line()
   "Find file at point and jump to line number delimited by colon. (main.cpp:23)"
@@ -139,6 +138,42 @@ Then move to that line and indent according to mode"
   (if (not (equal line-num 0))
       (goto-line line-num)))
 
+(define-key global-map [f12] 'find-file-at-point-with-line)
+(define-key global-map [S-f12] 'find-file-at-point)
+
+;;------------------------------------------------------------------------------
+;;
+;; Helm/Projectile
+;;
+;;------------------------------------------------------------------------------
+
+(require 'helm-config)
+(helm-mode 1)
+
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to do persistent action
+(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)   ; make TAB works in terminal
+(define-key helm-map (kbd "C-z") 'helm-select-action)               ; list actions using C-z
+(global-set-key (kbd "M-x") 'helm-M-x)
+
+(projectile-global-mode)
+(setq projectile-enable-caching t)
+(setq projectile-completion-system 'helm)
+(helm-projectile-on)
+
+(require 'smart-mode-line)
+(sml/setup)
+
+;;------------------------------------------------------------------------------
+;;
+;; Gnus
+;;
+;;------------------------------------------------------------------------------
+
+(setq user-mail-addresss "allen.gooch@gmail.com")
+(setq user-full-name "Allen Gooch")
+(setq gnus-select-method '(nntp "news.gmane.org"))
+(setq gnus-save-newsrc-file nil)
+
 ;;------------------------------------------------------------------------------
 ;;
 ;; General IDE
@@ -148,7 +183,6 @@ Then move to that line and indent according to mode"
 (require 'yasnippet)
 (add-hook 'prog-mode-hook (lambda () 
 			    (hl-line-mode 1)
-			    (linum-mode 1)
 			    (show-paren-mode)
 			    (yas-minor-mode)))
 
@@ -175,32 +209,30 @@ Then move to that line and indent according to mode"
 
 ;;------------------------------------------------------------------------------
 ;;
-;; HTML IDE
+;; Web IDE
 ;;
 ;;------------------------------------------------------------------------------
 
 (require 'web-mode)
+(add-hook 'web-mode-hook (lambda ()
+                           (setq web-mode-markup-indent-offset 2)
+			   (setq web-mode-css-indent-offset 2)
+			   (setq web-mode-code-indent-offset 2)))
+
+(require 'emmet-mode)
+(add-hook 'web-mode-hook 'emmet-mode)
+
+(setq css-indent-offset 2)
+
+(defadvice web-mode-highlight-part (around tweak-jsx activate)
+  (if (equal web-mode-content-type "jsx")
+      (let ((web-mode-enable-part-face nil))
+        ad-do-it)
+    ad-do-it))
+
 (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
-
-;;------------------------------------------------------------------------------
-;;
-;; JavaScript IDE
-;;
-;;------------------------------------------------------------------------------
-
-(require 'js2-mode)
-(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
-(add-hook 'js2-mode-hook (lambda () 
-			   (setq js-indent-level 2)
-			   (setq js2-indent-level 2)
-			   (setq js2-basic-offset 2)))
-(add-hook 'js2-mode-hook 'my-run-pmh-if-not-ran)
-
-(defun my-run-pmh-if-not-ran ()
-  (unless (bound-and-true-p my-pmh-ran)
-    (run-hooks 'prog-mode-hook)))
-
+(add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
 
 ;;------------------------------------------------------------------------------
 ;;
@@ -213,14 +245,29 @@ Then move to that line and indent according to mode"
 
 ;;------------------------------------------------------------------------------
 ;;
-;; Keybindings
+;; Python IDE
 ;;
 ;;------------------------------------------------------------------------------
 
-(define-key global-map [home] 'beginning-of-line)
-(define-key global-map [end] 'end-of-line)
-(define-key global-map [C-return] 'open-line-below)
-(define-key global-map [C-S-return] 'open-line-above)
-(define-key global-map [S-f12] 'find-file-at-point)
-(define-key global-map [f12] 'find-file-at-point-with-line)
-(define-key global-map [C-x C-g] 'ido-recentf-open)
+(elpy-enable)
+
+;;------------------------------------------------------------------------------
+;;
+;; SQL IDE
+;;
+;;------------------------------------------------------------------------------
+
+(add-hook 'sql-interactive-mode-hook (lambda ()
+				       (toggle-truncate-lines t)))
+
+;;------------------------------------------------------------------------------
+;;
+;; Markdown IDE
+;;
+;;------------------------------------------------------------------------------
+
+(autoload 'markdown-mode "markdown-mode"
+  "Major mode for editing Markdown files" t)
+(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
