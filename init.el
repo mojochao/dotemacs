@@ -65,6 +65,7 @@
 			  magit
 			  markdown-mode
 			  projectile
+			  restclient
 			  smart-mode-line
 			  web-mode
 			  yasnippet
