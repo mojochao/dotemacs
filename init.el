@@ -66,7 +66,6 @@
 			  exec-path-from-shell
 			  helm
 			  helm-projectile
-			  image+
 			  js2-mode
 			  json-mode
 			  less-css-mode
@@ -76,7 +75,6 @@
 			  paredit
 			  projectile
 			  restclient
-			  slime
 			  smart-mode-line
 			  web-mode
 			  yasnippet
@@ -266,15 +264,6 @@ Then move to that line and indent according to mode"
           (lambda ()
             (make-local-variable 'js-indent-level)
             (setq js-indent-level 2)))
-
-;;------------------------------------------------------------------------------
-;;
-;; Common Lisp IDE
-;;
-;;------------------------------------------------------------------------------
-
-;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
-;; (setq inferior-lisp-program "/usr/local/bin/sbcl")
 
 ;;------------------------------------------------------------------------------
 ;;
