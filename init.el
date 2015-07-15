@@ -30,13 +30,18 @@
 ;; show filename in window frame
 (setq frame-title-format "%f")
 
-;; No truncation of messages in 'echo' area
+;; no truncation of messages in 'echo' area
 (setq eval-expression-print-length nil)
 
 (setq column-number-mode t)	        ; show line numbers in modeline
 (setq line-number-mode t)               ; show line numbers in modeline
 (delete-selection-mode 1)               ; delete marked region and replace with new content
 (fset 'yes-or-no-p 'y-or-n-p)           ; use shortcuts for all yes/no prompts
+
+;; smooth scrolling with trackpad or mouse
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+(setq mouse-wheel-progressive-speed nil)
+(setq scroll-step 1)
 
 ;;-------------------------------------------------------------------------
 ;;
@@ -61,6 +66,7 @@
 			  exec-path-from-shell
 			  helm
 			  helm-projectile
+			  image+
 			  js2-mode
 			  json-mode
 			  less-css-mode
@@ -70,6 +76,7 @@
 			  paredit
 			  projectile
 			  restclient
+			  slime
 			  smart-mode-line
 			  web-mode
 			  yasnippet
@@ -209,6 +216,13 @@ Then move to that line and indent according to mode"
 
 (add-hook 'prog-mode-hook 'my-set-pmh-ran)
 
+
+(defun sudo-save ()
+  (interactive)
+  (if (not buffer-file-name)
+      (write-file (concat "/sudo:root@localhost:" (ido-read-file-name "File:")))
+    (write-file (concat "/sudo:root@localhost:" buffer-file-name))))
+
 ;;------------------------------------------------------------------------------
 ;;
 ;; C++ IDE
@@ -259,8 +273,8 @@ Then move to that line and indent according to mode"
 ;;
 ;;------------------------------------------------------------------------------
 
-(load (expand-file-name "~/quicklisp/slime-helper.el"))
-(setq inferior-lisp-program "/usr/local/bin/sbcl")
+;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
+;; (setq inferior-lisp-program "/usr/local/bin/sbcl")
 
 ;;------------------------------------------------------------------------------
 ;;
