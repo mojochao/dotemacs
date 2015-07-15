@@ -55,15 +55,19 @@
 ;;-------------------------------------------------------------------------
 
 (defvar vendor-packages '(apache-mode
+			  cider
 			  elpy
 			  emmet-mode
+			  exec-path-from-shell
 			  helm
 			  helm-projectile
 			  js2-mode
+			  json-mode
 			  less-css-mode
 			  lorem-ipsum
 			  magit
 			  markdown-mode
+			  paredit
 			  projectile
 			  restclient
 			  smart-mode-line
@@ -84,6 +88,15 @@
 (dolist (package vendor-packages)
   (when (not (package-installed-p package))
     (package-install package)))
+
+;;------------------------------------------------------------------------------
+;;
+;; OS-specific configuration
+;;------------------------------------------------------------------------------
+
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize) ; use shell $PATH on Emacs.app for Mac OS X
+  (setq insert-directory-program (executable-find "gls"))) ; use coreutils verson of 'ls' command
 
 ;;------------------------------------------------------------------------------
 ;;
@@ -234,6 +247,11 @@ Then move to that line and indent according to mode"
 (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
+
+(add-hook 'json-mode-hook
+          (lambda ()
+            (make-local-variable 'js-indent-level)
+            (setq js-indent-level 2)))
 
 ;;------------------------------------------------------------------------------
 ;;
