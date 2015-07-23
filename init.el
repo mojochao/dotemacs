@@ -73,6 +73,7 @@
 			  magit
 			  markdown-mode
 			  paredit
+			  plantuml-mode
 			  projectile
 			  restclient
 			  smart-mode-line
@@ -293,3 +294,25 @@ Then move to that line and indent according to mode"
 (add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+
+;;------------------------------------------------------------------------------
+;;
+;; PlantUML IDE
+;;
+;;------------------------------------------------------------------------------
+
+(setq plantuml-jar-path (getenv "PLANTUML_JAR"))
+(add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode))
+
+;;------------------------------------------------------------------------------
+;;
+;; Org mode
+;;
+;;------------------------------------------------------------------------------
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '(;; other Babel languages
+   (plantuml . t)))
+
+(setq org-plantuml-jar-path plantuml-jar-path)
