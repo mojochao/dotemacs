@@ -301,7 +301,7 @@ Then move to that line and indent according to mode"
 ;;
 ;;------------------------------------------------------------------------------
 
-(setq plantuml-jar-path (getenv "PLANTUML_JAR"))
+(setq plantuml-jar-path "/usr/local/Cellar/plantuml/8024/plantuml.8024.jar")
 (add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode))
 
 ;;------------------------------------------------------------------------------
