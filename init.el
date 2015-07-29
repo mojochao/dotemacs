@@ -266,6 +266,11 @@ Then move to that line and indent according to mode"
             (make-local-variable 'js-indent-level)
             (setq js-indent-level 2)))
 
+(defun json-format ()
+  (interactive)
+  (save-excursion
+    (shell-command-on-region (mark) (point) "python -m json.tool" (buffer-name) t)))
+
 ;;------------------------------------------------------------------------------
 ;;
 ;; Python IDE
