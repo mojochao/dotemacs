@@ -320,4 +320,6 @@ Then move to that line and indent according to mode"
  '(;; other Babel languages
    (plantuml . t)))
 
+(setq org-list-description-max-indent 5)
+(setq org-adapt-indentation nil)
 (setq org-plantuml-jar-path plantuml-jar-path)
