@@ -59,7 +59,7 @@
 ;;
 ;;-------------------------------------------------------------------------
 
-(defvar vendor-packages '(apache-mode
+(defvar common-packages '(apache-mode
 			  cider
 			  elpy
 			  emmet-mode
@@ -73,6 +73,7 @@
 			  magit
 			  markdown-mode
 			  paredit
+			  php-mode
 			  plantuml-mode
 			  projectile
 			  restclient
@@ -80,7 +81,15 @@
 			  web-mode
 			  yasnippet
 			  zenburn-theme)
-  "A list of external packages to ensure are installed at launch.")
+  "A list of common external packages to ensure are installed at launch.")
+
+(defvar darwin-packages '(reveal-in-osx-finder)
+  "A list of Mac OS packages to ensure are installed at launch.")
+
+(defvar vendor-packages common-packages
+  "A list of all packages to ensure are installed at launch.")
+(if (eq system-type 'darwin)
+    (append vendor-packages darwin-packages))
 
 (require 'package)
 
@@ -102,7 +111,9 @@
 
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize) ; use shell $PATH on Emacs.app for Mac OS X
+  (require 'reveal-in-osx-finder)
   (setq insert-directory-program (executable-find "gls"))) ; use coreutils verson of 'ls' command
+
 
 ;;------------------------------------------------------------------------------
 ;;
@@ -203,6 +214,7 @@ Then move to that line and indent according to mode"
 (require 'yasnippet)
 (add-hook 'prog-mode-hook (lambda () 
 			    (hl-line-mode 1)
+			    (linum-mode 1)
 			    (show-paren-mode)
 			    (yas-minor-mode)))
 
@@ -270,6 +282,10 @@ Then move to that line and indent according to mode"
   (interactive)
   (save-excursion
     (shell-command-on-region (mark) (point) "python -m json.tool" (buffer-name) t)))
+
+(autoload 'php-mode "php-mode" "Major mode for editing php code." t)
+(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+(add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
 
 ;;------------------------------------------------------------------------------
 ;;
