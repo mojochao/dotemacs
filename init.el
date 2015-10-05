@@ -293,6 +293,8 @@ Then move to that line and indent according to mode"
 ;;
 ;;------------------------------------------------------------------------------
 
+(add-hook 'python-mode-hook
+	  '(lambda () (modify-syntax-entry ?_ "w" python-mode-syntax-table)))
 (elpy-enable)
 
 ;;------------------------------------------------------------------------------
