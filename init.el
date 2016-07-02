@@ -59,12 +59,14 @@
 ;;
 ;;-------------------------------------------------------------------------
 
-(defvar common-packages '(apache-mode
-			  cider
+(defvar common-packages '(cider
+			  docker
+			  dockerfile-mode
 			  elpy
 			  emmet-mode
 			  exec-path-from-shell
 			  helm
+			  helm-mt
 			  helm-projectile
 			  js2-mode
 			  json-mode
@@ -72,6 +74,7 @@
 			  lorem-ipsum
 			  magit
 			  markdown-mode
+			  multi-term
 			  paredit
 			  php-mode
 			  plantuml-mode
@@ -106,17 +109,6 @@
 
 ;;------------------------------------------------------------------------------
 ;;
-;; OS-specific configuration
-;;------------------------------------------------------------------------------
-
-(when (memq window-system '(mac ns))
-  (exec-path-from-shell-initialize) ; use shell $PATH on Emacs.app for Mac OS X
-  (require 'reveal-in-osx-finder)
-  (setq insert-directory-program (executable-find "gls"))) ; use coreutils verson of 'ls' command
-
-
-;;------------------------------------------------------------------------------
-;;
 ;; Theming
 ;;
 ;;------------------------------------------------------------------------------
@@ -129,6 +121,7 @@
 ;;
 ;;------------------------------------------------------------------------------
 
+(define-key global-map [s-return] 'toggle-frame-fullscreen) ;; same as iTerm
 (define-key global-map [home] 'beginning-of-line)
 (define-key global-map [end] 'end-of-line)
 
@@ -172,6 +165,16 @@ Then move to that line and indent according to mode"
 (define-key global-map [f12] 'find-file-at-point-with-line)
 (define-key global-map [S-f12] 'find-file-at-point)
 
+
+;;------------------------------------------------------------------------------
+;;
+;; Terminals
+;;
+;;------------------------------------------------------------------------------
+
+(require 'multi-term)
+(setq multi-term-program "/bin/zsh")
+
 ;;------------------------------------------------------------------------------
 ;;
 ;; Helm/Projectile
@@ -194,16 +197,9 @@ Then move to that line and indent according to mode"
 (require 'smart-mode-line)
 (sml/setup)
 
-;;------------------------------------------------------------------------------
-;;
-;; Gnus
-;;
-;;------------------------------------------------------------------------------
-
-(setq user-mail-addresss "allen.gooch@gmail.com")
-(setq user-full-name "Allen Gooch")
-(setq gnus-select-method '(nntp "news.gmane.org"))
-(setq gnus-save-newsrc-file nil)
+(require 'helm-mt)
+(helm-mt/wrap-shells t)
+(global-set-key (kbd "C-x t") 'helm-mt)
 
 ;;------------------------------------------------------------------------------
 ;;
@@ -233,6 +229,16 @@ Then move to that line and indent according to mode"
   (if (not buffer-file-name)
       (write-file (concat "/sudo:root@localhost:" (ido-read-file-name "File:")))
     (write-file (concat "/sudo:root@localhost:" buffer-file-name))))
+
+(setq magit-last-seen-setup-instructions "1.4.0")
+
+;;------------------------------------------------------------------------------
+;;
+;; Docker tooling
+;;
+;;------------------------------------------------------------------------------
+
+(docker-global-mode)
 
 ;;------------------------------------------------------------------------------
 ;;
@@ -314,7 +320,6 @@ Then move to that line and indent according to mode"
 
 (autoload 'markdown-mode "markdown-mode"
   "Major mode for editing Markdown files" t)
-(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
@@ -341,3 +346,13 @@ Then move to that line and indent according to mode"
 (setq org-list-description-max-indent 5)
 (setq org-adapt-indentation nil)
 (setq org-plantuml-jar-path plantuml-jar-path)
+
+;;------------------------------------------------------------------------------
+;;
+;; OS-specific configuration
+;;------------------------------------------------------------------------------
+
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize) ; use shell $PATH on Emacs.app for Mac OS X
+  (require 'reveal-in-osx-finder)
+  (setq insert-directory-program (executable-find "gls"))) ; use coreutils verson of 'ls' command
