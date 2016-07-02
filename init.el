@@ -170,6 +170,11 @@ Then move to that line and indent according to mode"
 (global-set-key (kbd "<M-up>") 'er/expand-region)
 (global-set-key (kbd "<M-down>") 'er/contract-region)
 
+(require 'multiple-cursors)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+
 ;;------------------------------------------------------------------------------
 ;;
 ;; Terminals
