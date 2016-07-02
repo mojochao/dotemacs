@@ -33,7 +33,7 @@
 ;; no truncation of messages in 'echo' area
 (setq eval-expression-print-length nil)
 
-(setq column-number-mode t)	        ; show line numbers in modeline
+(setq column-number-mode t)             ; show line numbers in modeline
 (setq line-number-mode t)               ; show line numbers in modeline
 (delete-selection-mode 1)               ; delete marked region and replace with new content
 (fset 'yes-or-no-p 'y-or-n-p)           ; use shortcuts for all yes/no prompts
@@ -60,30 +60,30 @@
 ;;-------------------------------------------------------------------------
 
 (defvar common-packages '(cider
-			  docker
-			  dockerfile-mode
-			  elpy
-			  emmet-mode
-			  exec-path-from-shell
-			  helm
-			  helm-mt
-			  helm-projectile
-			  js2-mode
-			  json-mode
-			  less-css-mode
-			  lorem-ipsum
-			  magit
-			  markdown-mode
-			  multi-term
-			  paredit
-			  php-mode
-			  plantuml-mode
-			  projectile
-			  restclient
-			  smart-mode-line
-			  web-mode
-			  yasnippet
-			  zenburn-theme)
+                          docker
+                          dockerfile-mode
+                          elpy
+                          emmet-mode
+                          exec-path-from-shell
+                          helm
+                          helm-mt
+                          helm-projectile
+                          js2-mode
+                          json-mode
+                          less-css-mode
+                          lorem-ipsum
+                          magit
+                          markdown-mode
+                          multi-term
+                          paredit
+                          php-mode
+                          plantuml-mode
+                          projectile
+                          restclient
+                          smart-mode-line
+                          web-mode
+                          yasnippet
+                          zenburn-theme)
   "A list of common external packages to ensure are installed at launch.")
 
 (defvar darwin-packages '(reveal-in-osx-finder)
@@ -97,7 +97,7 @@
 (require 'package)
 
 (add-to-list 'package-archives
-	     '("melpa" . "http://melpa.org/packages/") t)
+             '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 
 (when (not package-archive-contents)
@@ -157,7 +157,7 @@ Then move to that line and indent according to mode"
   (save-excursion
     (search-forward-regexp "[^ ]:" (point-max) t)
     (if (looking-at "[0-9]+")
-         (setq line-num (string-to-number (buffer-substring (match-beginning 0) (match-end 0))))))
+        (setq line-num (string-to-number (buffer-substring (match-beginning 0) (match-end 0))))))
   (find-file (ffap-guesser))
   (if (not (equal line-num 0))
       (goto-line line-num)))
@@ -209,10 +209,10 @@ Then move to that line and indent according to mode"
 
 (require 'yasnippet)
 (add-hook 'prog-mode-hook (lambda () 
-			    (hl-line-mode 1)
-			    (linum-mode 1)
-			    (show-paren-mode)
-			    (yas-minor-mode)))
+                            (hl-line-mode 1)
+                            (linum-mode 1)
+                            (show-paren-mode)
+                            (yas-minor-mode)))
 
 ;; add buffer-local indicator for whether prog-mode-hook has run, to work around
 ;; js2-mode not being derived from prog-mode.
@@ -249,8 +249,8 @@ Then move to that line and indent according to mode"
 (require 'cc-mode)
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 (add-hook 'c++-mode-hook (lambda ()
-			   (c-set-style "stroustrup")
-			   (setq indent-tabs-mode t)))
+                           (c-set-style "stroustrup")
+                           (setq indent-tabs-mode t)))
 
 ;;------------------------------------------------------------------------------
 ;;
@@ -261,8 +261,8 @@ Then move to that line and indent according to mode"
 (require 'web-mode)
 (add-hook 'web-mode-hook (lambda ()
                            (setq web-mode-markup-indent-offset 2)
-			   (setq web-mode-css-indent-offset 2)
-			   (setq web-mode-code-indent-offset 2)))
+                           (setq web-mode-css-indent-offset 2)
+                           (setq web-mode-code-indent-offset 2)))
 
 (require 'emmet-mode)
 (add-hook 'web-mode-hook 'emmet-mode)
@@ -300,7 +300,7 @@ Then move to that line and indent according to mode"
 ;;------------------------------------------------------------------------------
 
 (add-hook 'python-mode-hook
-	  '(lambda () (modify-syntax-entry ?_ "w" python-mode-syntax-table)))
+          '(lambda () (modify-syntax-entry ?_ "w" python-mode-syntax-table)))
 (elpy-enable)
 
 ;;------------------------------------------------------------------------------
@@ -310,7 +310,7 @@ Then move to that line and indent according to mode"
 ;;------------------------------------------------------------------------------
 
 (add-hook 'sql-interactive-mode-hook (lambda ()
-				       (toggle-truncate-lines t)))
+                                       (toggle-truncate-lines t)))
 
 ;;------------------------------------------------------------------------------
 ;;
