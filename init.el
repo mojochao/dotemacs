@@ -77,7 +77,6 @@
                           markdown-mode
                           multi-term
                           paredit
-                          php-mode
                           plantuml-mode
                           projectile
                           restclient
