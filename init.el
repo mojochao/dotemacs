@@ -1,11 +1,5 @@
 ;; This configuration is intended for use with Emacs 24.3 or later.
 
-;;-------------------------------------------------------------------------
-;;
-;; Initial Configuration
-;;
-;;-------------------------------------------------------------------------
-
 ;; Turn off mouse interface early in startup to avoid momentary display
 (if (and (not (eq system-type 'darwin)) (fboundp 'menu-bar-mode)) (menu-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
@@ -33,7 +27,7 @@
 ;; no truncation of messages in 'echo' area
 (setq eval-expression-print-length nil)
 
-(setq column-number-mode t)             ; show line numbers in modeline
+(setq column-number-mode t)             ; show column numbers in modeline
 (setq line-number-mode t)               ; show line numbers in modeline
 (delete-selection-mode 1)               ; delete marked region and replace with new content
 (fset 'yes-or-no-p 'y-or-n-p)           ; use shortcuts for all yes/no prompts
@@ -43,21 +37,20 @@
 (setq mouse-wheel-progressive-speed nil)
 (setq scroll-step 1)
 
-;;-------------------------------------------------------------------------
-;;
-;; Emacs Daemon Configuration.  Why would you ever want to kill it anyway?!
-;;
-;;-------------------------------------------------------------------------
-
 (require 'server)
 (unless (server-running-p)
   (server-start))
 
+
 ;;-------------------------------------------------------------------------
-;;
-;; Package Management Configuration
-;;
-;;-------------------------------------------------------------------------
+;; package configuration
+
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.org/packages/") t)
+(package-initialize)
+(when (not package-archive-contents)
+  (package-refresh-contents))
 
 (defvar common-packages '(cider
                           docker
@@ -70,6 +63,7 @@
                           helm
                           helm-mt
                           helm-projectile
+			  idea-drakula-theme
                           js2-mode
                           json-mode
                           less-css-mode
@@ -77,7 +71,6 @@
                           magit
                           markdown-mode
                           multi-term
-                          paredit
                           plantuml-mode
                           projectile
                           restclient
@@ -92,39 +85,26 @@
   "A list of Mac OS packages to ensure are installed at launch.")
 
 (defvar vendor-packages common-packages
-  "A list of all packages to ensure are installed at launch.")
+  "The final list of all packages to ensure are installed at launch.")
+
 (if (eq system-type 'darwin)
     (append vendor-packages darwin-packages))
-
-(require 'package)
-
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.org/packages/") t)
-(package-initialize)
-
-(when (not package-archive-contents)
-  (package-refresh-contents))
-
 (dolist (package vendor-packages)
   (when (not (package-installed-p package))
     (package-install package)))
 
-;;------------------------------------------------------------------------------
-;;
-;; Theming
-;;
-;;------------------------------------------------------------------------------
 
-(load-theme 'zenburn)
+;;------------------------------------------------------------------------------
+;; appearance
+
+(load-theme 'idea-drakula)
 
 (require 'smart-mode-line)
 (sml/setup)
 
+
 ;;------------------------------------------------------------------------------
-;;
-;; Interactivity Enhancers
-;;
-;;------------------------------------------------------------------------------
+;; interaction
 
 (define-key global-map [s-return] 'toggle-frame-fullscreen) ;; same as iTerm
 (define-key global-map [home] 'beginning-of-line)
@@ -143,7 +123,7 @@ Then move to that line and indent according to mode"
   (previous-line)
   (indent-according-to-mode))
 
-(define-key global-map [C-return] 'open-line-below)
+(define-key global-map [C-S-return] 'open-line-above)
 
 (defun open-line-below ()
   "Open a line below the line the point is at.
@@ -153,7 +133,7 @@ Then move to that line and indent according to mode"
   (newline)
   (indent-according-to-mode))
 
-(define-key global-map [C-S-return] 'open-line-above)
+(define-key global-map [C-return] 'open-line-below)
 
 (defun sudo-save ()
   (interactive)
@@ -161,7 +141,7 @@ Then move to that line and indent according to mode"
       (write-file (concat "/sudo:root@localhost:" (ido-read-file-name "File:")))
     (write-file (concat "/sudo:root@localhost:" buffer-file-name))))
 
-(defun find-file-at-point-with-line()
+(defun find-file-line-at-point()
   "Find file at point and jump to line number delimited by colon. (main.cpp:23)"
   (interactive)
   (setq line-num 0)
@@ -173,7 +153,7 @@ Then move to that line and indent according to mode"
   (if (not (equal line-num 0))
       (goto-line line-num)))
 
-(define-key global-map [f12] 'find-file-at-point-with-line)
+(define-key global-map [f12] 'find-file-line-at-point)
 (define-key global-map [S-f12] 'find-file-at-point)
 
 (require 'expand-region)
@@ -185,12 +165,6 @@ Then move to that line and indent according to mode"
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
-;;------------------------------------------------------------------------------
-;;
-;; Completion tooling
-;;
-;;------------------------------------------------------------------------------
-
 (require 'helm-config)
 (helm-mode 1)
 
@@ -199,12 +173,6 @@ Then move to that line and indent according to mode"
 (define-key helm-map (kbd "C-z") 'helm-select-action)               ; list actions using C-z
 (global-set-key (kbd "M-x") 'helm-M-x)
 
-;;------------------------------------------------------------------------------
-;;
-;; Terminals tooling
-;;
-;;------------------------------------------------------------------------------
-
 (require 'multi-term)
 (setq multi-term-program "/bin/zsh")
 
@@ -212,31 +180,13 @@ Then move to that line and indent according to mode"
 (helm-mt/wrap-shells t)
 (global-set-key (kbd "C-x t") 'helm-mt)
 
-;;------------------------------------------------------------------------------
-;;
-;; Projects tooling
-;;
-;;------------------------------------------------------------------------------
-
 (projectile-global-mode)
 (setq projectile-enable-caching t)
 (setq projectile-completion-system 'helm)
 (helm-projectile-on)
 
-;;------------------------------------------------------------------------------
-;;
-;; Projects tooling
-;;
-;;------------------------------------------------------------------------------
-
 (setq magit-last-seen-setup-instructions "1.4.0")
 (global-set-key (kbd "C-c g") 'magit-status)
-
-;;------------------------------------------------------------------------------
-;;
-;; General IDE tooling
-;;
-;;------------------------------------------------------------------------------
 
 (require 'yasnippet)
 (add-hook 'prog-mode-hook (lambda () 
@@ -244,28 +194,15 @@ Then move to that line and indent according to mode"
                             (show-paren-mode)
                             (yas-minor-mode)))
 
-;; add buffer-local indicator for whether prog-mode-hook has run, to work around
-;; js2-mode not being derived from prog-mode.
-;;
-;; http://yoo2080.wordpress.com/2012/03/15/js2-mode-setup-recommendation/
-(defun my-set-pmh-ran ()
-  (set (make-local-variable 'my-pmh-ran) t))
-
-(add-hook 'prog-mode-hook 'my-set-pmh-ran)
 
 ;;------------------------------------------------------------------------------
-;;
 ;; Docker tooling
-;;
-;;------------------------------------------------------------------------------
 
 (docker-global-mode)
 
+
 ;;------------------------------------------------------------------------------
-;;
 ;; C++ tooling
-;;
-;;------------------------------------------------------------------------------
 
 (require 'cc-mode)
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
@@ -273,11 +210,17 @@ Then move to that line and indent according to mode"
                            (c-set-style "stroustrup")
                            (setq indent-tabs-mode t)))
 
+
 ;;------------------------------------------------------------------------------
-;;
 ;; Web tooling
+
+;; add buffer-local indicator for whether prog-mode-hook has run, to work around
+;; js2-mode not being derived from prog-mode.
 ;;
-;;------------------------------------------------------------------------------
+;; http://yoo2080.wordpress.com/2012/03/15/js2-mode-setup-recommendation/
+(defun my-set-pmh-ran ()
+  (set (make-local-variable 'my-pmh-ran) t))
+(add-hook 'prog-mode-hook 'my-set-pmh-ran)
 
 (require 'web-mode)
 (add-hook 'web-mode-hook (lambda ()
@@ -310,59 +253,36 @@ Then move to that line and indent according to mode"
   (save-excursion
     (shell-command-on-region (mark) (point) "python -m json.tool" (buffer-name) t)))
 
-(autoload 'php-mode "php-mode" "Major mode for editing php code." t)
-(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
-(add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
-
 ;; https://github.com/mojochao/emacs-npm
-(add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-npm")
-(require 'emacsnpm)
-(emacsnpm-global-mode)
+(add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-npm") ; soon to be https://github.com/mojochao/npm-mode
+(require 'emacsnpm)			; soon to be 'npm-mode
+(emacsnpm-global-mode)			; soon to be npm-global-mode
+
 
 ;;------------------------------------------------------------------------------
-;;
 ;; Python tooling
-;;
-;;------------------------------------------------------------------------------
 
 (add-hook 'python-mode-hook
           '(lambda () (modify-syntax-entry ?_ "w" python-mode-syntax-table)))
 (elpy-enable)
 
+
 ;;------------------------------------------------------------------------------
-;;
 ;; Database tooling
-;;
-;;------------------------------------------------------------------------------
 
 (add-hook 'sql-interactive-mode-hook (lambda ()
                                        (toggle-truncate-lines t)))
 
 ;;------------------------------------------------------------------------------
-;;
-;; Markdown tooling
-;;
-;;------------------------------------------------------------------------------
+;; Structured text tooling
 
 (autoload 'markdown-mode "markdown-mode"
   "Major mode for editing Markdown files" t)
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
-;;------------------------------------------------------------------------------
-;;
-;; UML tooling 
-;;
-;;------------------------------------------------------------------------------
-
 (setq plantuml-jar-path "/usr/local/Cellar/plantuml/8024/plantuml.8024.jar")
 (add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode))
-
-;;------------------------------------------------------------------------------
-;;
-;; Org mode
-;;
-;;------------------------------------------------------------------------------
 
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -374,9 +294,7 @@ Then move to that line and indent according to mode"
 (setq org-plantuml-jar-path plantuml-jar-path)
 
 ;;------------------------------------------------------------------------------
-;;
-;; OS-specific configuration
-;;------------------------------------------------------------------------------
+;; macOS configuration
 
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize) ; use shell $PATH on Emacs.app for Mac OS X
