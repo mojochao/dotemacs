@@ -83,6 +83,7 @@
                           restclient
                           smart-mode-line
                           web-mode
+			  yaml-mode
                           yasnippet
                           zenburn-theme)
   "A list of common external packages to ensure are installed at launch.")
