@@ -65,8 +65,8 @@
                           elpy
                           emmet-mode
                           exec-path-from-shell
-			  expand-region
-			  gitignore-mode
+                          expand-region
+                          gitignore-mode
                           helm
                           helm-mt
                           helm-projectile
@@ -83,7 +83,7 @@
                           restclient
                           smart-mode-line
                           web-mode
-			  yaml-mode
+                          yaml-mode
                           yasnippet
                           zenburn-theme)
   "A list of common external packages to ensure are installed at launch.")
