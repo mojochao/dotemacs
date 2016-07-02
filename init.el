@@ -65,6 +65,7 @@
                           elpy
                           emmet-mode
                           exec-path-from-shell
+			  expand-region
 			  gitignore-mode
                           helm
                           helm-mt
@@ -165,6 +166,9 @@ Then move to that line and indent according to mode"
 (define-key global-map [f12] 'find-file-at-point-with-line)
 (define-key global-map [S-f12] 'find-file-at-point)
 
+(require 'expand-region)
+(global-set-key (kbd "<M-up>") 'er/expand-region)
+(global-set-key (kbd "<M-down>") 'er/contract-region)
 
 ;;------------------------------------------------------------------------------
 ;;
@@ -209,7 +213,6 @@ Then move to that line and indent according to mode"
 
 (require 'yasnippet)
 (add-hook 'prog-mode-hook (lambda () 
-                            (hl-line-mode 1)
                             (linum-mode 1)
                             (show-paren-mode)
                             (yas-minor-mode)))
