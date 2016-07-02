@@ -65,6 +65,7 @@
                           elpy
                           emmet-mode
                           exec-path-from-shell
+			  gitignore-mode
                           helm
                           helm-mt
                           helm-projectile
@@ -231,6 +232,7 @@ Then move to that line and indent according to mode"
     (write-file (concat "/sudo:root@localhost:" buffer-file-name))))
 
 (setq magit-last-seen-setup-instructions "1.4.0")
+(global-set-key (kbd "C-c g") 'magit-status)
 
 ;;------------------------------------------------------------------------------
 ;;
@@ -292,6 +294,11 @@ Then move to that line and indent according to mode"
 (autoload 'php-mode "php-mode" "Major mode for editing php code." t)
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 (add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
+
+;; https://github.com/mojochao/emacs-npm
+(add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-npm")
+(require 'emacsnpm)
+(emacsnpm-global-mode)
 
 ;;------------------------------------------------------------------------------
 ;;
