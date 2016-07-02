@@ -78,8 +78,7 @@
                           smart-mode-line
                           web-mode
                           yaml-mode
-                          yasnippet
-                          zenburn-theme)
+                          yasnippet)
   "A list of common external packages to ensure are installed at launch.")
 
 (defvar darwin-packages '(reveal-in-osx-finder)
