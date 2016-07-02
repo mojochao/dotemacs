@@ -117,6 +117,9 @@
 
 (load-theme 'zenburn)
 
+(require 'smart-mode-line)
+(sml/setup)
+
 ;;------------------------------------------------------------------------------
 ;;
 ;; Interactivity Enhancers
@@ -152,6 +155,12 @@ Then move to that line and indent according to mode"
 
 (define-key global-map [C-S-return] 'open-line-above)
 
+(defun sudo-save ()
+  (interactive)
+  (if (not buffer-file-name)
+      (write-file (concat "/sudo:root@localhost:" (ido-read-file-name "File:")))
+    (write-file (concat "/sudo:root@localhost:" buffer-file-name))))
+
 (defun find-file-at-point-with-line()
   "Find file at point and jump to line number delimited by colon. (main.cpp:23)"
   (interactive)
@@ -178,16 +187,7 @@ Then move to that line and indent according to mode"
 
 ;;------------------------------------------------------------------------------
 ;;
-;; Terminals
-;;
-;;------------------------------------------------------------------------------
-
-(require 'multi-term)
-(setq multi-term-program "/bin/zsh")
-
-;;------------------------------------------------------------------------------
-;;
-;; Helm/Projectile
+;; Completion tooling
 ;;
 ;;------------------------------------------------------------------------------
 
@@ -199,13 +199,14 @@ Then move to that line and indent according to mode"
 (define-key helm-map (kbd "C-z") 'helm-select-action)               ; list actions using C-z
 (global-set-key (kbd "M-x") 'helm-M-x)
 
-(projectile-global-mode)
-(setq projectile-enable-caching t)
-(setq projectile-completion-system 'helm)
-(helm-projectile-on)
+;;------------------------------------------------------------------------------
+;;
+;; Terminals tooling
+;;
+;;------------------------------------------------------------------------------
 
-(require 'smart-mode-line)
-(sml/setup)
+(require 'multi-term)
+(setq multi-term-program "/bin/zsh")
 
 (require 'helm-mt)
 (helm-mt/wrap-shells t)
@@ -213,7 +214,27 @@ Then move to that line and indent according to mode"
 
 ;;------------------------------------------------------------------------------
 ;;
-;; General IDE
+;; Projects tooling
+;;
+;;------------------------------------------------------------------------------
+
+(projectile-global-mode)
+(setq projectile-enable-caching t)
+(setq projectile-completion-system 'helm)
+(helm-projectile-on)
+
+;;------------------------------------------------------------------------------
+;;
+;; Projects tooling
+;;
+;;------------------------------------------------------------------------------
+
+(setq magit-last-seen-setup-instructions "1.4.0")
+(global-set-key (kbd "C-c g") 'magit-status)
+
+;;------------------------------------------------------------------------------
+;;
+;; General IDE tooling
 ;;
 ;;------------------------------------------------------------------------------
 
@@ -232,16 +253,6 @@ Then move to that line and indent according to mode"
 
 (add-hook 'prog-mode-hook 'my-set-pmh-ran)
 
-
-(defun sudo-save ()
-  (interactive)
-  (if (not buffer-file-name)
-      (write-file (concat "/sudo:root@localhost:" (ido-read-file-name "File:")))
-    (write-file (concat "/sudo:root@localhost:" buffer-file-name))))
-
-(setq magit-last-seen-setup-instructions "1.4.0")
-(global-set-key (kbd "C-c g") 'magit-status)
-
 ;;------------------------------------------------------------------------------
 ;;
 ;; Docker tooling
@@ -252,7 +263,7 @@ Then move to that line and indent according to mode"
 
 ;;------------------------------------------------------------------------------
 ;;
-;; C++ IDE
+;; C++ tooling
 ;;
 ;;------------------------------------------------------------------------------
 
@@ -264,7 +275,7 @@ Then move to that line and indent according to mode"
 
 ;;------------------------------------------------------------------------------
 ;;
-;; Web IDE
+;; Web tooling
 ;;
 ;;------------------------------------------------------------------------------
 
@@ -310,7 +321,7 @@ Then move to that line and indent according to mode"
 
 ;;------------------------------------------------------------------------------
 ;;
-;; Python IDE
+;; Python tooling
 ;;
 ;;------------------------------------------------------------------------------
 
@@ -320,7 +331,7 @@ Then move to that line and indent according to mode"
 
 ;;------------------------------------------------------------------------------
 ;;
-;; SQL IDE
+;; Database tooling
 ;;
 ;;------------------------------------------------------------------------------
 
@@ -329,7 +340,7 @@ Then move to that line and indent according to mode"
 
 ;;------------------------------------------------------------------------------
 ;;
-;; Markdown IDE
+;; Markdown tooling
 ;;
 ;;------------------------------------------------------------------------------
 
@@ -340,7 +351,7 @@ Then move to that line and indent according to mode"
 
 ;;------------------------------------------------------------------------------
 ;;
-;; PlantUML IDE
+;; UML tooling 
 ;;
 ;;------------------------------------------------------------------------------
 
