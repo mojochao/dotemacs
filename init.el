@@ -37,6 +37,7 @@
 (setq mouse-wheel-progressive-speed nil)
 (setq scroll-step 1)
 
+;; you don't shut down emacs, do ya?!
 (require 'server)
 (unless (server-running-p)
   (server-start))
@@ -63,7 +64,7 @@
                           helm
                           helm-mt
                           helm-projectile
-			  idea-drakula-theme
+			  idea-darkula-theme
                           js2-mode
                           json-mode
                           less-css-mode
@@ -97,7 +98,7 @@
 ;;------------------------------------------------------------------------------
 ;; appearance
 
-(load-theme 'idea-drakula)
+(load-theme 'idea-darkula)
 
 (require 'smart-mode-line)
 (sml/setup)
@@ -254,9 +255,9 @@ Then move to that line and indent according to mode"
     (shell-command-on-region (mark) (point) "python -m json.tool" (buffer-name) t)))
 
 ;; https://github.com/mojochao/emacs-npm
-(add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-npm") ; soon to be https://github.com/mojochao/npm-mode
-(require 'emacsnpm)			; soon to be 'npm-mode
-(emacsnpm-global-mode)			; soon to be npm-global-mode
+(add-to-list 'load-path "~/.emacs.d/site-lisp/npm-mode")
+(require 'npm-mode)
+(npm-global-mode)
 
 
 ;;------------------------------------------------------------------------------
