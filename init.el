@@ -293,6 +293,7 @@ Then move to that line and indent according to mode"
 (setq org-adapt-indentation nil)
 (setq org-plantuml-jar-path plantuml-jar-path)
 
+
 ;;------------------------------------------------------------------------------
 ;; macOS configuration
 
