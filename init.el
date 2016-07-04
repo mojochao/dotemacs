@@ -62,6 +62,7 @@
                           expand-region
                           gitignore-mode
                           helm
+			  helm-ag
                           helm-mt
                           helm-projectile
 			  idea-darkula-theme
