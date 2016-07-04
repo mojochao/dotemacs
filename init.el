@@ -196,6 +196,21 @@ Then move to that line and indent according to mode"
 
 
 ;;------------------------------------------------------------------------------
+;; Elisp tooling
+
+(defun ielm-auto-complete ()
+  "Enables `auto-complete' support in \\[ielm]."
+  (setq ac-sources '(ac-source-functions
+                     ac-source-variables
+                     ac-source-features
+                     ac-source-symbols
+                     ac-source-words-in-same-mode-buffers))
+  (add-to-list 'ac-modes 'inferior-emacs-lisp-mode)
+  (auto-complete-mode 1))
+(add-hook 'ielm-mode-hook 'ielm-auto-complete)
+
+
+;;------------------------------------------------------------------------------
 ;; Docker tooling
 
 (docker-global-mode)
@@ -253,7 +268,6 @@ Then move to that line and indent according to mode"
   (save-excursion
     (shell-command-on-region (mark) (point) "python -m json.tool" (buffer-name) t)))
 
-;; https://github.com/mojochao/emacs-npm
 (add-to-list 'load-path "~/.emacs.d/site-lisp/npm-mode")
 (require 'npm-mode)
 (npm-global-mode)
