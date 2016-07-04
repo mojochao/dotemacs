@@ -53,8 +53,7 @@
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(defvar common-packages '(cider
-                          docker
+(defvar common-packages '(docker
                           dockerfile-mode
                           elpy
                           emmet-mode
@@ -62,17 +61,17 @@
                           expand-region
                           gitignore-mode
                           helm
-			  helm-ag
+                          helm-ag
                           helm-mt
                           helm-projectile
-			  idea-darkula-theme
+                          idea-darkula-theme
                           js2-mode
                           json-mode
-                          less-css-mode
                           lorem-ipsum
                           magit
                           markdown-mode
                           multi-term
+                          multiple-cursors
                           plantuml-mode
                           projectile
                           restclient
@@ -195,6 +194,8 @@ Then move to that line and indent according to mode"
                             (show-paren-mode)
                             (yas-minor-mode)))
 
+(add-to-list 'load-path "~/.emacs.d/site-lisp/npm-mode")
+(require 'npm-mode)
 
 ;;------------------------------------------------------------------------------
 ;; Elisp tooling
