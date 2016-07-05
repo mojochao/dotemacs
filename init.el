@@ -60,9 +60,11 @@
                           emmet-mode
                           exec-path-from-shell
                           expand-region
+			  flycheck
                           gitignore-mode
                           helm
                           helm-ag
+			  helm-flycheck
                           helm-mt
                           helm-projectile
                           idea-darkula-theme
@@ -73,6 +75,7 @@
                           markdown-mode
                           multi-term
                           multiple-cursors
+			  nvm
                           plantuml-mode
                           projectile
                           restclient
@@ -85,23 +88,22 @@
 (defvar darwin-packages '(reveal-in-osx-finder)
   "A list of Mac OS packages to ensure are installed at launch.")
 
-(defvar vendor-packages common-packages
-  "The final list of all packages to ensure are installed at launch.")
-
-(if (eq system-type 'darwin)
-    (append vendor-packages darwin-packages))
-(dolist (package vendor-packages)
+(dolist (package common-packages)
   (when (not (package-installed-p package))
     (package-install package)))
 
+(if (eq system-type 'darwin)
+    (dolist (package darwin-packages)
+      (when (not (package-installed-p package))
+	((point)ackage-install package))))
 
 ;;------------------------------------------------------------------------------
 ;; appearance
 
 (load-theme 'idea-darkula)
 
-(require 'smart-mode-line)
-(sml/setup)
+;(require 'smart-mode-line)
+;(sml/setup)
 
 
 ;;------------------------------------------------------------------------------
@@ -198,6 +200,12 @@ Then move to that line and indent according to mode"
 (add-to-list 'load-path "~/.emacs.d/site-lisp/npm-mode")
 (require 'npm-mode)
 
+
+(require 'flycheck)
+(add-hook 'after-init-hook #'global-flycheck-mode) ; turn on flychecking globally
+(setq-default flycheck-temp-prefix ".flycheck") ; customize flycheck temp file prefix
+
+
 ;;------------------------------------------------------------------------------
 ;; Elisp tooling
 
@@ -230,7 +238,13 @@ Then move to that line and indent according to mode"
 
 
 ;;------------------------------------------------------------------------------
-;; Web tooling
+;; JavaScript tooling
+
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-to-list 'auto-mode-alist '(".babelrc\\'" . json-mode))
+(add-to-list 'auto-mode-alist '(".eslintignore\\'" . gitignore-mode))
+(add-to-list 'auto-mode-alist '(".eslintrc\\'" . json-mode))
+(add-to-list 'auto-mode-alist '(".editorconfig\\'" . json-mode))
 
 ;; add buffer-local indicator for whether prog-mode-hook has run, to work around
 ;; js2-mode not being derived from prog-mode.
@@ -240,31 +254,15 @@ Then move to that line and indent according to mode"
   (set (make-local-variable 'my-pmh-ran) t))
 (add-hook 'prog-mode-hook 'my-set-pmh-ran)
 
-(require 'web-mode)
-(add-hook 'web-mode-hook (lambda ()
-                           (setq web-mode-markup-indent-offset 2)
-                           (setq web-mode-css-indent-offset 2)
-                           (setq web-mode-code-indent-offset 2)))
+;; disable jshint in preference to eslint
+(setq-default flycheck-disabled-checkers (append flycheck-disabled-checkers '(javascript-jshint)))
 
-(require 'emmet-mode)
-(add-hook 'web-mode-hook 'emmet-mode)
+;; use eslint with web-mode for jsx files
+(flycheck-add-mode 'javascript-eslint 'web-mode)
 
-(setq css-indent-offset 2)
+;; disable json-jsonlist checking for json files
+(setq-default flycheck-disabled-checkers (append flycheck-disabled-checkers '(json-jsonlist)))
 
-(defadvice web-mode-highlight-part (around tweak-jsx activate)
-  (if (equal web-mode-content-type "jsx")
-      (let ((web-mode-enable-part-face nil))
-        ad-do-it)
-    ad-do-it))
-
-(add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
-
-(add-to-list 'auto-mode-alist '(".babelrc\\'" . json-mode))
-(add-to-list 'auto-mode-alist '(".eslintignore\\'" . gitignore-mode))
-(add-to-list 'auto-mode-alist '(".eslintrc\\'" . json-mode))
-(add-to-list 'auto-mode-alist '(".editorconfig\\'" . json-mode))
 
 (add-hook 'json-mode-hook
           (lambda ()
@@ -278,7 +276,32 @@ Then move to that line and indent according to mode"
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/npm-mode")
 (require 'npm-mode)
-(npm-global-mode)
+
+(require 'nvm)
+
+
+;;------------------------------------------------------------------------------
+;; Web tooling
+
+(require 'web-mode)
+(add-hook 'web-mode-hook (lambda ()
+                           (setq web-mode-markup-indent-offset 2)
+                           (setq web-mode-css-indent-offset 2)
+                           (setq web-mode-code-indent-offset 2)))
+
+(add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+
+(require 'emmet-mode)
+(add-hook 'web-mode-hook 'emmet-mode)
+
+(setq css-indent-offset 2)
+
+;; React tooling
+(defadvice web-mode-highlight-part (around tweak-jsx activate)
+  (if (equal web-mode-content-type "jsx")
+      (let ((web-mode-enable-part-face nil))
+        ad-do-it)
+    ad-do-it))
 
 
 ;;------------------------------------------------------------------------------
