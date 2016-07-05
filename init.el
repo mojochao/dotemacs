@@ -29,6 +29,9 @@
 
 ;;; Code:
 
+;;-------------------------------------------------------------------------
+;; initial configuration
+
 ;; Turn off mouse interface early in startup to avoid momentary display
 (if (and (not (eq system-type 'darwin)) (fboundp 'menu-bar-mode)) (menu-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
@@ -71,6 +74,7 @@
   (server-start))
 
 (prefer-coding-system 'utf-8)
+
 
 ;;-------------------------------------------------------------------------
 ;; package configuration
@@ -125,6 +129,7 @@
       (when (not (package-installed-p package))
         (package-install package))))
 
+
 ;;------------------------------------------------------------------------------
 ;; appearance
 
@@ -134,6 +139,7 @@
 (setq sml/no-confirm-load-theme t)
 (sml/setup)
 (setq sml/theme 'dark)
+
 
 ;;------------------------------------------------------------------------------
 ;; interaction
@@ -227,7 +233,6 @@
 (add-to-list 'load-path "~/.emacs.d/site-lisp/npm-mode")
 (require 'npm-mode)
 
-
 (require 'flycheck)
 (add-hook 'after-init-hook #'global-flycheck-mode) ; turn on flychecking globally
 (setq-default flycheck-temp-prefix ".flycheck") ; customize flycheck temp file prefix
@@ -246,12 +251,6 @@
   (add-to-list 'ac-modes 'inferior-emacs-lisp-mode)
   (auto-complete-mode 1))
 (add-hook 'ielm-mode-hook 'ielm-auto-complete)
-
-
-;;------------------------------------------------------------------------------
-;; Docker tooling
-
-(docker-global-mode)
 
 
 ;;------------------------------------------------------------------------------
@@ -350,6 +349,13 @@
 
 (add-hook 'sql-interactive-mode-hook (lambda ()
                                        (toggle-truncate-lines t)))
+
+
+;;------------------------------------------------------------------------------
+;; Docker tooling
+
+(docker-global-mode)
+
 
 ;;------------------------------------------------------------------------------
 ;; Structured text tooling
