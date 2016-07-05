@@ -42,6 +42,7 @@
 (unless (server-running-p)
   (server-start))
 
+(prefer-coding-system 'utf-8)
 
 ;;-------------------------------------------------------------------------
 ;; package configuration
@@ -259,6 +260,11 @@ Then move to that line and indent according to mode"
 (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
+
+(add-to-list 'auto-mode-alist '(".babelrc\\'" . json-mode))
+(add-to-list 'auto-mode-alist '(".eslintignore\\'" . gitignore-mode))
+(add-to-list 'auto-mode-alist '(".eslintrc\\'" . json-mode))
+(add-to-list 'auto-mode-alist '(".editorconfig\\'" . json-mode))
 
 (add-hook 'json-mode-hook
           (lambda ()
