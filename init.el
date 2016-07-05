@@ -133,6 +133,8 @@
 ;; appearance
 
 (load-theme 'idea-darkula)
+
+(setq sml/no-confirm-load-theme t)
 (sml/setup)
 (setq sml/theme 'dark)
 
@@ -364,7 +366,7 @@ Then move to that line and indent according to mode"
 
 (org-babel-do-load-languages
  'org-babel-load-languages
- '(;; other Babel languages
+ '((sql . t)
    (plantuml . t)))
 
 (setq org-list-description-max-indent 5)
