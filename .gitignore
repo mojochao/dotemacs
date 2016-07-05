@@ -1,4 +1,5 @@
 *~
+.flycheck_init.el
 .mc-lists.el
 auto-save-list/
 backups/
