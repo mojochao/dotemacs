@@ -1,4 +1,33 @@
-;; This configuration is intended for use with Emacs 24.3 or later.
+;;; init.el --- my personal Emacs configuration
+
+;; Version: 0.1.0
+;; Author: Allen Gooch <allen.gooch@gmail.com>
+;; Url: https://github.com/mojochao/npm-mode
+;; Keywords: configuration
+;; Package-Requires: ((emacs "24.1"))
+
+;; This file is NOT part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;; Boston, MA 02110-1301, USA.
+
+;;; Commentary:
+
+;; This package provides my personal Emacs configuration.
+
+;;; Code:
 
 ;; Turn off mouse interface early in startup to avoid momentary display
 (if (and (not (eq system-type 'darwin)) (fboundp 'menu-bar-mode)) (menu-bar-mode -1))
@@ -60,11 +89,11 @@
                           emmet-mode
                           exec-path-from-shell
                           expand-region
-			  flycheck
+                          flycheck
                           gitignore-mode
                           helm
                           helm-ag
-			  helm-flycheck
+                          helm-flycheck
                           helm-mt
                           helm-projectile
                           idea-darkula-theme
@@ -75,7 +104,8 @@
                           markdown-mode
                           multi-term
                           multiple-cursors
-			  nvm
+                          nvm
+                          paradox
                           plantuml-mode
                           projectile
                           restclient
@@ -95,16 +125,16 @@
 (if (eq system-type 'darwin)
     (dolist (package darwin-packages)
       (when (not (package-installed-p package))
-	((point)ackage-install package))))
+        (package-install package))))
+
+(setq paradox-github-token (getenv "PARADOX_GITHUB_API_TOKEN"))
 
 ;;------------------------------------------------------------------------------
 ;; appearance
 
 (load-theme 'idea-darkula)
-
-;(require 'smart-mode-line)
-;(sml/setup)
-
+(sml/setup)
+(setq sml/theme 'dark)
 
 ;;------------------------------------------------------------------------------
 ;; interaction
@@ -154,7 +184,7 @@ Then move to that line and indent according to mode"
         (setq line-num (string-to-number (buffer-substring (match-beginning 0) (match-end 0))))))
   (find-file (ffap-guesser))
   (if (not (equal line-num 0))
-      (goto-line line-num)))
+      (forward-line line-num)))
 
 (define-key global-map [f12] 'find-file-line-at-point)
 (define-key global-map [S-f12] 'find-file-at-point)
@@ -245,6 +275,9 @@ Then move to that line and indent according to mode"
 (add-to-list 'auto-mode-alist '(".eslintignore\\'" . gitignore-mode))
 (add-to-list 'auto-mode-alist '(".eslintrc\\'" . json-mode))
 (add-to-list 'auto-mode-alist '(".editorconfig\\'" . json-mode))
+
+;; prefer eslint to js2-mode warnings of missing semi-colons
+(setq js2-strict-missing-semi-warning nil)
 
 ;; add buffer-local indicator for whether prog-mode-hook has run, to work around
 ;; js2-mode not being derived from prog-mode.
