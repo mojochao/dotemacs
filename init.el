@@ -43,12 +43,11 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror)
 
-;; configure gnus to use configuration in .gnus.el file
-(setq gnus-init-file "~/.emacs.d/.gnus.el")
-(setq gnus-save-newsrc-file nil)
-
 ;; configure backups to be persisted outside of source directories
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+
+;; configure gnus configuration in external file
+(setq gnus-init-file "~/.emacs.d/.gnus.el")
 
 ;; show filename in window frame
 (setq frame-title-format "%f")
