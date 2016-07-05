@@ -43,7 +43,7 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror)
 
-;; configure gnus to use configuration in ~/.emacs.d directory
+;; configure gnus to use configuration in .gnus.el file
 (setq gnus-init-file "~/.emacs.d/.gnus.el")
 (setq gnus-save-newsrc-file nil)
 
@@ -105,7 +105,6 @@
                           multi-term
                           multiple-cursors
                           nvm
-                          paradox
                           plantuml-mode
                           projectile
                           restclient
@@ -127,13 +126,12 @@
       (when (not (package-installed-p package))
         (package-install package))))
 
-(setq paradox-github-token (getenv "PARADOX_GITHUB_API_TOKEN"))
-
 ;;------------------------------------------------------------------------------
 ;; appearance
 
 (load-theme 'idea-darkula)
 
+(require 'smart-mode-line)
 (setq sml/no-confirm-load-theme t)
 (sml/setup)
 (setq sml/theme 'dark)
@@ -149,28 +147,24 @@
 (recentf-mode t)
 (setq recentf-max-saved-items 50)
 
-(defun open-line-above ()
-  "Open a line above the line the point is at.
-Then move to that line and indent according to mode"
-  (interactive)
-  (move-beginning-of-line 1)
-  (newline)
-  (previous-line)
-  (indent-according-to-mode))
-
-(define-key global-map [C-S-return] 'open-line-above)
-
 (defun open-line-below ()
-  "Open a line below the line the point is at.
-Then move to that line and indent according to mode"
+  "Open a line below current line with point at indent position."
   (interactive)
   (move-end-of-line 1)
   (newline)
   (indent-according-to-mode))
 
+(defun open-line-above ()
+  "Open a line above current line with point at indent position."
+  (interactive)
+  (forward-line -1)
+  (open-line-below))
+
 (define-key global-map [C-return] 'open-line-below)
+(define-key global-map [C-S-return] 'open-line-above)
 
 (defun sudo-save ()
+  "Save the current buffer as sudo."
   (interactive)
   (if (not buffer-file-name)
       (write-file (concat "/sudo:root@localhost:" (ido-read-file-name "File:")))
@@ -179,14 +173,14 @@ Then move to that line and indent according to mode"
 (defun find-file-line-at-point()
   "Find file at point and jump to line number delimited by colon. (main.cpp:23)"
   (interactive)
-  (setq line-num 0)
-  (save-excursion
-    (search-forward-regexp "[^ ]:" (point-max) t)
-    (if (looking-at "[0-9]+")
-        (setq line-num (string-to-number (buffer-substring (match-beginning 0) (match-end 0))))))
-  (find-file (ffap-guesser))
-  (if (not (equal line-num 0))
-      (forward-line line-num)))
+  (let ((line-num 0))
+    (save-excursion
+      (search-forward-regexp "[^ ]:" (point-max) t)
+      (if (looking-at "[0-9]+")
+	  (setq line-num (string-to-number (buffer-substring (match-beginning 0) (match-end 0))))))
+    (find-file (ffap-guesser))
+    (if (not (equal line-num 0))
+	(forward-line line-num))))
 
 (define-key global-map [f12] 'find-file-line-at-point)
 (define-key global-map [S-f12] 'find-file-at-point)
@@ -215,16 +209,18 @@ Then move to that line and indent according to mode"
 (helm-mt/wrap-shells t)
 (global-set-key (kbd "C-x t") 'helm-mt)
 
+(require 'projectile)
 (projectile-global-mode)
 (setq projectile-enable-caching t)
 (setq projectile-completion-system 'helm)
 (helm-projectile-on)
 
+(require 'magit)
 (setq magit-last-seen-setup-instructions "1.4.0")
 (global-set-key (kbd "C-c g") 'magit-status)
 
 (require 'yasnippet)
-(add-hook 'prog-mode-hook (lambda () 
+(add-hook 'prog-mode-hook (lambda ()
                             (linum-mode 1)
                             (show-paren-mode)
                             (yas-minor-mode)))
@@ -286,6 +282,7 @@ Then move to that line and indent according to mode"
 ;;
 ;; http://yoo2080.wordpress.com/2012/03/15/js2-mode-setup-recommendation/
 (defun my-set-pmh-ran ()
+  "Add buffer-local indicator for whether 'prog-mode-hook' has run, to work around."
   (set (make-local-variable 'my-pmh-ran) t))
 (add-hook 'prog-mode-hook 'my-set-pmh-ran)
 
@@ -305,6 +302,7 @@ Then move to that line and indent according to mode"
             (setq js-indent-level 2)))
 
 (defun json-format ()
+  "Format JavaScript region."
   (interactive)
   (save-excursion
     (shell-command-on-region (mark) (point) "python -m json.tool" (buffer-name) t)))
@@ -333,6 +331,7 @@ Then move to that line and indent according to mode"
 
 ;; React tooling
 (defadvice web-mode-highlight-part (around tweak-jsx activate)
+  "Edit React JSX with web mode."
   (if (equal web-mode-content-type "jsx")
       (let ((web-mode-enable-part-face nil))
         ad-do-it)
@@ -381,3 +380,5 @@ Then move to that line and indent according to mode"
   (exec-path-from-shell-initialize) ; use shell $PATH on Emacs.app for Mac OS X
   (require 'reveal-in-osx-finder)
   (setq insert-directory-program (executable-find "gls"))) ; use coreutils verson of 'ls' command
+
+;;; init.el ends here
