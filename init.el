@@ -371,7 +371,8 @@
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((sql . t)
-   (plantuml . t)))
+   (plantuml . t)
+   (python . t)))
 
 (setq org-list-description-max-indent 5)
 (setq org-adapt-indentation nil)
