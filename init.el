@@ -108,6 +108,7 @@
                           multi-term
                           multiple-cursors
                           nvm
+                          ob-restclient
                           plantuml-mode
                           projectile
                           restclient
@@ -117,17 +118,17 @@
                           yasnippet)
   "A list of common external packages to ensure are installed at launch.")
 
-(defvar darwin-packages '(reveal-in-osx-finder)
+(defvar macos-packages '(reveal-in-osx-finder)
   "A list of Mac OS packages to ensure are installed at launch.")
 
 (dolist (package common-packages)
   (when (not (package-installed-p package))
     (package-install package)))
 
-(if (eq system-type 'darwin)
-    (dolist (package darwin-packages)
-      (when (not (package-installed-p package))
-        (package-install package))))
+(when (memq window-system '(mac ns))
+  (dolist (package macos-packages)
+    (when (not (package-installed-p package))
+      (package-install package))))
 
 
 ;;------------------------------------------------------------------------------
@@ -182,10 +183,10 @@
     (save-excursion
       (search-forward-regexp "[^ ]:" (point-max) t)
       (if (looking-at "[0-9]+")
-	  (setq line-num (string-to-number (buffer-substring (match-beginning 0) (match-end 0))))))
+          (setq line-num (string-to-number (buffer-substring (match-beginning 0) (match-end 0))))))
     (find-file (ffap-guesser))
     (if (not (equal line-num 0))
-	(forward-line line-num))))
+        (forward-line line-num))))
 
 (define-key global-map [f12] 'find-file-line-at-point)
 (define-key global-map [S-f12] 'find-file-at-point)
@@ -237,9 +238,15 @@
 (add-hook 'after-init-hook #'global-flycheck-mode) ; turn on flychecking globally
 (setq-default flycheck-temp-prefix ".flycheck") ; customize flycheck temp file prefix
 
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;;------------------------------------------------------------------------------
 ;; Elisp tooling
+
+(defun my-emacs-lisp-mode-hook ()
+  "Configure elisp mode."
+  (setq indent-tabs-mode nil))
+(add-hook 'emacs-lisp-mode-hook 'my-emacs-lisp-mode-hook)
 
 (defun ielm-auto-complete ()
   "Enables `auto-complete' support in \\[ielm]."
@@ -271,6 +278,8 @@
 (add-to-list 'auto-mode-alist '(".eslintignore\\'" . gitignore-mode))
 (add-to-list 'auto-mode-alist '(".eslintrc\\'" . json-mode))
 (add-to-list 'auto-mode-alist '(".editorconfig\\'" . json-mode))
+
+(setq js2-basic-offset 2)
 
 ;; prefer eslint to js2-mode warnings of missing semi-colons
 (setq js2-strict-missing-semi-warning nil)
@@ -370,9 +379,11 @@
 
 (org-babel-do-load-languages
  'org-babel-load-languages
- '((sql . t)
+ '((sh . t)
+   (sql . t)
    (plantuml . t)
-   (python . t)))
+   (python . t)
+   (restclient . t)))
 
 (setq org-list-description-max-indent 5)
 (setq org-adapt-indentation nil)
