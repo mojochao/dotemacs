@@ -63,17 +63,24 @@
 (delete-selection-mode 1)               ; delete marked region and replace with new content
 (fset 'yes-or-no-p 'y-or-n-p)           ; use shortcuts for all yes/no prompts
 
-;; smooth scrolling with trackpad or mouse
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
-(setq mouse-wheel-progressive-speed nil)
-(setq scroll-step 1)
-
 ;; you don't shut down emacs, do ya?!
 (require 'server)
 (unless (server-running-p)
   (server-start))
 
 (prefer-coding-system 'utf-8)
+
+(when (display-graphic-p)
+  ;; smooth scrolling with trackpad or mouse
+  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+  (setq mouse-wheel-progressive-speed nil)
+  (setq scroll-step 1)
+  (put 'scroll-left 'disabled nil)
+  (put 'scroll-right 'disabled nil)
+  ;; (global-set-key (kbd "<mouse-6>") 'scroll-right)
+  ;; (global-set-key (kbd "<mouse-7>") 'scroll-left)
+  (global-set-key [wheel-right] 'scroll-left)
+  (global-set-key [wheel-left] 'scroll-right))
 
 
 ;;-------------------------------------------------------------------------
@@ -99,6 +106,7 @@
                           helm-flycheck
                           helm-mt
                           helm-projectile
+                          htmlize
                           idea-darkula-theme
                           js2-mode
                           json-mode
@@ -369,13 +377,20 @@
 ;;------------------------------------------------------------------------------
 ;; Structured text tooling
 
+(defun structured-text-hook ()
+  "Configure structured text editing settings."
+  (auto-fill-mode))
+
 (autoload 'markdown-mode "markdown-mode"
   "Major mode for editing Markdown files" t)
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+(add-hook 'markdown-mode-hook 'structured-text-hook)
 
 (setq plantuml-jar-path "/usr/local/Cellar/plantuml/8024/plantuml.8024.jar")
 (add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode))
+
+(add-hook 'org-mode-hook 'structured-text-hook)
 
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -389,6 +404,7 @@
 (setq org-adapt-indentation nil)
 (setq org-plantuml-jar-path plantuml-jar-path)
 
+(add-hook 'rst-mode-hook 'structured-text-hook)
 
 ;;------------------------------------------------------------------------------
 ;; macOS configuration
@@ -396,6 +412,6 @@
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize) ; use shell $PATH on Emacs.app for Mac OS X
   (require 'reveal-in-osx-finder)
-  (setq insert-directory-program (executable-find "gls"))) ; use coreutils verson of 'ls' command
+  (setq insert-directory-program (executable-find "gls"))) ; use coreutils 'ls' command
 
 ;;; init.el ends here
