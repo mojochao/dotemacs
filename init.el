@@ -248,6 +248,13 @@
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
+(defun kill-most-buffers ()
+  "Kill most buffers, except the two Emacs initial ones."
+  (interactive)
+  (dolist (buffer (buffer-list))
+    (unless (member (buffer-name buffer) '("*scratch*" "*Messages*"))
+      (kill-buffer buffer))))
+
 ;;------------------------------------------------------------------------------
 ;; Elisp tooling
 
