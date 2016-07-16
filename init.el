@@ -2,7 +2,7 @@
 
 ;; Version: 0.1.0
 ;; Author: Allen Gooch <allen.gooch@gmail.com>
-;; Url: https://github.com/mojochao/npm-mode
+;; Url: https://github.com/mojochao/dotemacs
 ;; Keywords: configuration
 ;; Package-Requires: ((emacs "24.1"))
 
@@ -138,6 +138,8 @@
     (when (not (package-installed-p package))
       (package-install package))))
 
+(add-to-list 'load-path "~/.emacs.d/site-lisp/npm-mode")
+(require 'npm-mode)
 
 ;;------------------------------------------------------------------------------
 ;; appearance
@@ -239,9 +241,6 @@
                             (show-paren-mode)
                             (yas-minor-mode)))
 
-(add-to-list 'load-path "~/.emacs.d/site-lisp/npm-mode")
-(require 'npm-mode)
-
 (require 'flycheck)
 (add-hook 'after-init-hook #'global-flycheck-mode) ; turn on flychecking globally
 (setq-default flycheck-temp-prefix ".flycheck") ; customize flycheck temp file prefix
@@ -328,9 +327,6 @@
   (interactive)
   (save-excursion
     (shell-command-on-region (mark) (point) "python -m json.tool" (buffer-name) t)))
-
-(add-to-list 'load-path "~/.emacs.d/site-lisp/npm-mode")
-(require 'npm-mode)
 
 (require 'nvm)
 
