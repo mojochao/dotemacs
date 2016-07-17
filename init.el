@@ -74,7 +74,7 @@
   ;; smooth scrolling with trackpad or mouse
   (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
   (setq mouse-wheel-progressive-speed nil)
-  (setq scroll-step 1)
+  (setq scroll-step 1))
   ;; (put 'scroll-left 'disabled nil)
   ;; (put 'scroll-right 'disabled nil)
   ;; (global-set-key (kbd "<mouse-6>") 'scroll-right)
