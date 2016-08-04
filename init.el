@@ -74,13 +74,12 @@
   ;; smooth scrolling with trackpad or mouse
   (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
   (setq mouse-wheel-progressive-speed nil)
-  (setq scroll-step 1)
-  (put 'scroll-left 'disabled nil)
-  (put 'scroll-right 'disabled nil)
-  ;; (global-set-key (kbd "<mouse-6>") 'scroll-right)
-  ;; (global-set-key (kbd "<mouse-7>") 'scroll-left)
-  (global-set-key [wheel-right] 'scroll-left)
-  (global-set-key [wheel-left] 'scroll-right))
+  (setq scroll-step 1))
+  ;; enable horizontal scrolling
+  ;; (put 'scroll-left 'disabled nil)
+  ;; (put 'scroll-right 'disabled nil)
+  ;; (global-set-key [wheel-right] 'scroll-left)
+  ;; (global-set-key [wheel-left] 'scroll-right))
 
 
 ;;-------------------------------------------------------------------------
@@ -247,6 +246,12 @@
 (setq-default flycheck-temp-prefix ".flycheck") ; customize flycheck temp file prefix
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+(defun make-parent-directory ()
+  "Make sure the directory of variable `buffer-file-name' exists."
+  (make-directory (file-name-directory buffer-file-name) t))
+
+(add-hook 'find-file-not-found-functions #'make-parent-directory)
 
 ;;------------------------------------------------------------------------------
 ;; Elisp tooling
