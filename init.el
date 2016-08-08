@@ -2,7 +2,7 @@
 
 ;; Version: 0.1.0
 ;; Author: Allen Gooch <allen.gooch@gmail.com>
-;; Url: https://github.com/mojochao/npm-mode
+;; Url: https://github.com/mojochao/dotemacs
 ;; Keywords: configuration
 ;; Package-Requires: ((emacs "24.1"))
 
@@ -75,9 +75,10 @@
   (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
   (setq mouse-wheel-progressive-speed nil)
   (setq scroll-step 1))
-  ;; enable horizontal scrolling
   ;; (put 'scroll-left 'disabled nil)
   ;; (put 'scroll-right 'disabled nil)
+  ;; (global-set-key (kbd "<mouse-6>") 'scroll-right)
+  ;; (global-set-key (kbd "<mouse-7>") 'scroll-left)
   ;; (global-set-key [wheel-right] 'scroll-left)
   ;; (global-set-key [wheel-left] 'scroll-right))
 
@@ -252,6 +253,13 @@
   (make-directory (file-name-directory buffer-file-name) t))
 
 (add-hook 'find-file-not-found-functions #'make-parent-directory)
+
+(defun kill-most-buffers ()
+  "Kill most buffers, except the two Emacs initial ones."
+  (interactive)
+  (dolist (buffer (buffer-list))
+    (unless (member (buffer-name buffer) '("*scratch*" "*Messages*"))
+      (kill-buffer buffer))))
 
 ;;------------------------------------------------------------------------------
 ;; Elisp tooling
