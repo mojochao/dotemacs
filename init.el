@@ -58,6 +58,9 @@
 ;; no truncation of messages in 'echo' area
 (setq eval-expression-print-length nil)
 
+(unless (display-graphic-p)
+  (setq menu-bar-mode nil))
+
 (setq column-number-mode t)             ; show column numbers in modeline
 (setq line-number-mode t)               ; show line numbers in modeline
 (delete-selection-mode 1)               ; delete marked region and replace with new content
