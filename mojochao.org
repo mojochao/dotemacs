@@ -1,19 +1,36 @@
-* Org Notebook Configuration
+* Allen Gooch's Emacs Config
 
   [[http://orgmode.org/][Org mode]] is a great tool for storing and managing data in crazy ways
-  with text documents.  This configuration will focus on configuring
-  org mode for use as such an interactive and exploratory programming
-  notebook.
-  
-  This configuration is an org file using a [[http://www.literateprogramming.com/index.html][literate programming]]
-  style.
+  with text documents.  This configuration file uses org mode to
+  express itself in a [[http://www.literateprogramming.com/index.html][literate programming]] style.  The init.el file in
+  this directory merely bootstraps this process.  All real
+  configuration is captured here.
+
+  I'm a polyglot, fullstack programmer so this configuration is
+  tailored for such uses, including:
+  - taking notes
+  - adding reminders
+  - task tracking
+  - working on multiple projects
+  - writing technical documentation
+  - editing, testing, and debugging code in multiple languages
+  - working with git repositories
+  - interactive and exploratory computing
+  - working with docker
+  - working with virtual machines
+  - working with remote hosts
+  - working with database servers
+  - devops
 
 ** Core Configuration
+
+   There are some customizations that apply to Emacs as a whole.
+
 *** Customizations Persistence
 
-    Since the ~/.emacs.d/init.el file simply bootstraps this
-    configuration, we don't want to write to it.  Instead, persist
-    customizations to a separate file.
+    Since the init.el file simply bootstraps this configuration, we
+    don't want to write to it.  Instead, persist customizations to a
+    separate file.
     
     I don't really use the customize interface much, preferring to
     (setq) my variables directory, but small things like my font
@@ -63,7 +80,7 @@
           (sml/setup)
           (setq sml/theme 'dark)))
     #+END_SRC
-    
+
 *** Miscellaneous Usability tweaks
 
     Honestly, you just don't need to see the startup and
@@ -85,6 +102,14 @@
 
     #+BEGIN_SRC emacs-lisp
       (setq frame-title-format "%f")
+    #+END_SRC
+
+    I don't like to see all the minor modes' names in the modeline.
+    Use diminish to allow them to be squelched.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package diminish
+        :ensure t)
     #+END_SRC
 
     Disable truncation of messages in 'echo' area.
@@ -176,21 +201,20 @@
 
    #+BEGIN_SRC emacs-lisp
      (use-package helm
-	   :ensure t
-	   :diminish helm-mode
-	   :init
-	   (progn
-	     (require 'helm-config)
-	     (setq helm-candidate-number-limit 100)
-	     ;; From https://gist.github.com/antifuchs/9238468
-	     (setq helm-idle-delay 0.0         ; update fast sources immediately (doesn't).
-		   helm-input-idle-delay 0.01  ; this actually updates things
-					       ; reeeelatively quickly.
-		   helm-yas-display-key-on-candidate t
-		   helm-quick-update t
-		   helm-M-x-requires-pattern nil
-		   helm-ff-skip-boring-files t)
-	     (helm-mode)))
+       :ensure t
+       :diminish helm-mode
+       :init
+       (progn
+         (require 'helm-config)
+         (setq helm-candidate-number-limit 100)
+         ;; From https://gist.github.com/antifuchs/9238468
+         (setq helm-idle-delay 0.0         ; update fast sources immediately (doesn't).
+               helm-input-idle-delay 0.01  ; this actually updates things relatively quickly.
+               helm-yas-display-key-on-candidate t
+               helm-quick-update t
+               helm-M-x-requires-pattern nil
+               helm-ff-skip-boring-files t)
+         (helm-mode)))
    #+END_SRC
 
 ** Search
@@ -316,23 +340,40 @@
      brew install plantuml
    #+END_SRC
 
+   One crappy thing is that plantuml-mode requires that the plantuml
+   jar filename be exactly plantuml.jar.  Brew installs it with the
+   version number in the file name.  Let's just symlink it here with
+   the expected name.
+
+   #+BEGIN_SRC sh
+     jarfile=$(less $(which plantuml) | grep plantuml | cut -d ' ' -f 5)
+     ln -s $jarfile ~/.emacs.d/plantuml.jar
+   #+END_SRC
+
+   #+RESULTS:
+
    If plantuml is found in your path, it will be configured for use.
    
    #+BEGIN_SRC emacs-lisp
-     ;; (let ((path (shell-command-to-string "which plantuml")))
-     ;;   (when (= (length (split-string path)) 1)
-     ;;     (use-package plantuml-mode
-     ;;       :ensure t
-     ;;       :init
-     ;;       (progn
-     ;;         (setq plantuml-jar-path (shell-command-to-string "less `which plantuml`|grep plantuml|cut -d ' ' -f 5"))
-     ;;         (setq org-plantuml-jar-path (shell-command-to-string "less `which plantuml`|grep plantuml|cut -d ' ' -f 5"))
-     ;;         (add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode))))))
+     (let ((path (shell-command-to-string "which plantuml")))
+       (when (= (length (split-string path)) 1)
+         (use-package plantuml-mode
+           :ensure t
+           :init
+           (progn
+             (setq plantuml-jar-path (expand-file-name "~/.emacs.d/plantuml.jar"))
+             (setq org-plantuml-jar-path plantuml-jar-path)
+             (add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode))))))
    #+END_SRC
 
-** Pythonn Development
+** Python Development
 
-   For now, let's just use the builtin support.
+   [[https://elpy.readthedocs.io/en/latest/][Elpy]] provides nice IDE capabilities for Python development.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package elpy
+       :ensure t)
+   #+END_SRC
 
 ** Org Notebook Configuration
 
@@ -345,7 +386,7 @@
       '((dot . t)
         (sh . t)
         (sql . t)
-        ;; (plantuml . t)
+        (plantuml . t)
         (python . t)
         (restclient . t)))
    #+END_SRC
