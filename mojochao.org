@@ -1,0 +1,351 @@
+* Org Notebook Configuration
+
+  [[http://orgmode.org/][Org mode]] is a great tool for storing and managing data in crazy ways
+  with text documents.  This configuration will focus on configuring
+  org mode for use as such an interactive and exploratory programming
+  notebook.
+  
+  This configuration is an org file using a [[http://www.literateprogramming.com/index.html][literate programming]]
+  style.
+
+** Core Configuration
+*** Customizations Persistence
+
+    Since the ~/.emacs.d/init.el file simply bootstraps this
+    configuration, we don't want to write to it.  Instead, persist
+    customizations to a separate file.
+    
+    I don't really use the customize interface much, preferring to
+    (setq) my variables directory, but small things like my font
+    settings get written here, although I may add that to my theming
+    configuration below at some point in the future.
+    
+    #+BEGIN_SRC emacs-lisp
+      (setq custom-file "~/.emacs.d/custom.el")
+      (load custom-file 'noerror)
+    #+END_SRC
+
+*** Backups Persistence
+
+    By default, Emacs writes backup files to the same directory as the
+    original being editing, with a '~' suffix, and clutters up your
+    project directories.  Instead, persist them to a local backups
+    directory.
+
+    #+BEGIN_SRC emacs-lisp
+      (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+      (setq delete-old-versions -1)
+      (setq version-control t)
+      (setq vc-make-backup-files t)
+      (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
+    #+END_SRC
+
+*** Theming
+
+    I like to use the idea-darkula-theme.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package idea-darkula-theme
+        :ensure t
+        :config 
+        (load-theme 'idea-darkula)
+      )
+    #+END_SRC
+
+    Go ahead and configure smart-mode-line as well.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package smart-mode-line
+        :ensure t
+        :config
+        (progn
+          (setq sml/no-confirm-load-theme t)
+          (sml/setup)
+          (setq sml/theme 'dark)))
+    #+END_SRC
+    
+*** Miscellaneous Usability tweaks
+
+    Honestly, you just don't need to see the startup and
+    scratch buffer messages.  Disable them.
+
+    #+BEGIN_SRC emacs-lisp
+      (setq inhibit-startup-message t)
+      (setq initial-scratch-message nil)
+    #+END_SRC
+    
+    I like to see column and line numbers in my modeline.
+
+    #+BEGIN_SRC emacs-lisp
+      (setq column-number-mode t)
+      (setq line-number-mode t)
+    #+END_SRC
+
+    I like to see the filename in the window frame.
+
+    #+BEGIN_SRC emacs-lisp
+      (setq frame-title-format "%f")
+    #+END_SRC
+
+    Disable truncation of messages in 'echo' area.
+
+    #+BEGIN_SRC emacs-lisp
+      (setq eval-expression-print-length nil)
+    #+END_SRC
+
+    Yes/no is a chore. Enable use of y/n everywhere.
+
+    #+BEGIN_SRC emacs-lisp
+      (fset 'yes-or-no-p 'y-or-n-p)
+    #+END_SRC
+
+    If a region as active, delete the marked region and replace with
+    new content.
+
+    #+BEGIN_SRC emacs-lisp
+      (delete-selection-mode 1)
+    #+END_SRC
+
+    Sometimes a mouse or trackpad is handy. Enable smooth scrolling
+    when running in gui.
+    
+    #+BEGIN_SRC emacs-lisp
+      (when (display-graphic-p)
+        (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+        (setq mouse-wheel-progressive-speed nil)
+        (setq scroll-step 1))
+    #+END_SRC
+
+    Configure recent files support.
+
+    #+BEGIN_SRC emacs-lisp
+      (require 'recentf)
+      (recentf-mode t)
+      (setq recentf-max-saved-items 50)
+    #+END_SRC
+
+*** Emacs Server
+
+    You don't shut down emacs, do ya?!
+
+    #+BEGIN_SRC emacs-lisp
+      (require 'server)
+      (unless (server-running-p)
+        (server-start))
+    #+END_SRC
+
+    Now you can use the emacsclient command to instantaneously edit
+    your files with the running emacs server.
+
+*** File encoding
+
+    Default to UTF-8 encoding for files.
+
+    #+BEGIN_SRC emacs-lisp
+      (prefer-coding-system 'utf-8)
+    #+END_SRC
+    
+** MacOS Configuration
+
+   Let's help ourselves out here.  Start by using the shell $PATH on
+   Emacs.app for Mac OS X, and 
+
+   #+BEGIN_SRC emacs-lisp
+     (when (eq system-type 'darwin)
+       (use-package exec-path-from-shell
+         :ensure t)
+       (exec-path-from-shell-initialize)
+       
+       (use-package reveal-in-osx-finder
+         :ensure t)
+       
+       (setq insert-directory-program (executable-find "gls")))
+   #+END_SRC
+
+   Make sure you have installed the GNU coreutils as well.
+
+   #+BEGIN_SRC sh
+     brew install coreutils
+   #+END_SRC
+
+** Completion Support
+   
+   One common capability is intelligent, contextual completion of things.
+   [[http://tuhdo.github.io/helm-intro.html][Helm]] provides a powerful and extensible system for completion, that
+   will be used by other packages we use.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package helm
+	   :ensure t
+	   :diminish helm-mode
+	   :init
+	   (progn
+	     (require 'helm-config)
+	     (setq helm-candidate-number-limit 100)
+	     ;; From https://gist.github.com/antifuchs/9238468
+	     (setq helm-idle-delay 0.0         ; update fast sources immediately (doesn't).
+		   helm-input-idle-delay 0.01  ; this actually updates things
+					       ; reeeelatively quickly.
+		   helm-yas-display-key-on-candidate t
+		   helm-quick-update t
+		   helm-M-x-requires-pattern nil
+		   helm-ff-skip-boring-files t)
+	     (helm-mode)))
+   #+END_SRC
+
+** Search
+
+   [[http://geoff.greer.fm/ag/][Ag]] is a great search tool, and integrates with Emacs.  First, ensure
+   it's installed on your mac.
+   
+   #+BEGIN_SRC sh
+     brew install ag
+   #+END_SRC
+
+   Now let's configure it for use with helm completion.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package helm-ag
+       :ensure t)
+   #+END_SRC
+
+** Git Support
+
+   [[https://magit.vc/][Magit]] rocks.  You definitely need to check it out, so install it.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package magit
+       :ensure t)
+   #+END_SRC
+
+** Project Support
+
+   I use [[http://batsov.com/projectile/][Projectile]] for project support in Emacs.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package helm-projectile
+       :ensure t)
+
+     (use-package projectile
+       :ensure t
+       :config
+       (progn
+         (setq projectile-enable-caching t)
+         (setq projectile-completion-system 'helm)
+         (helm-projectile-on)))
+   #+END_SRC
+
+** REST Client
+
+   A rest client comes in handy when testing APIs.  Let's install [[https://github.com/pashky/restclient.el][restclient]].
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package restclient
+       :ensure t)
+   #+END_SRC
+
+   We can also enhance the restclient integration with org docs.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package ob-restclient
+       :ensure t)
+   #+END_SRC
+
+** SQL Client
+
+   Emacs SQL client support is pretty good right out of the box.
+   Let's disable truncation of lines in sql-interactive mode,
+   however. 
+
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'sql-interactive-mode-hook (lambda ()
+                                            (toggle-truncate-lines t)))
+   #+END_SRC
+
+** Terminals
+
+   Emacs provides great support for running ANSI terminals.  What it
+   lacks is easy use of multiple terminals in the same session, but we
+   can fix that.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package multi-term
+       :ensure t
+       :init (setq multi-term-program "/bin/zsh"))
+   #+END_SRC
+
+   Helm completion of multi-term session can also be added.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package helm-mt
+       :ensure t
+       :init (helm-mt/wrap-shells t))
+   #+END_SRC
+
+** Graphviz Dot Support
+
+   [[http://graphviz.org/][Graphviz]] is a collection of open source graph visualization tools.
+   Descriptions of graphs, specified in text files, can be processed
+   by these tools to create visualizations.  Emacs can be configured
+   to support both the editing and display of graphs using Graphviz.
+
+   Note that this requires the installation of graphviz.  On macOS
+   it's a simple brew install away.
+
+   #+BEGIN_SRC sh
+     brew install graphviz
+   #+END_SRC
+
+   Now it can be used.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package graphviz-dot-mode
+       :ensure t)
+   #+END_SRC
+
+** PlantUML Support
+
+   [[http://plantuml.com/][PlantUML]] is an application that generates UML diagrams from textual
+   descriptions.  Emacs can be configured to support both the editing
+   and display of UML diagrams using PlantUML.
+
+   Note that this requires the installation of plantuml.  On macOS
+   it's a simple brew install away.
+
+   #+BEGIN_SRC sh
+     brew install plantuml
+   #+END_SRC
+
+   If plantuml is found in your path, it will be configured for use.
+   
+   #+BEGIN_SRC emacs-lisp
+     ;; (let ((path (shell-command-to-string "which plantuml")))
+     ;;   (when (= (length (split-string path)) 1)
+     ;;     (use-package plantuml-mode
+     ;;       :ensure t
+     ;;       :init
+     ;;       (progn
+     ;;         (setq plantuml-jar-path (shell-command-to-string "less `which plantuml`|grep plantuml|cut -d ' ' -f 5"))
+     ;;         (setq org-plantuml-jar-path (shell-command-to-string "less `which plantuml`|grep plantuml|cut -d ' ' -f 5"))
+     ;;         (add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode))))))
+   #+END_SRC
+
+** Pythonn Development
+
+   For now, let's just use the builtin support.
+
+** Org Notebook Configuration
+
+   To use org files as notebooks, we first need to configure the
+   languages we will work with.  These are what I tend to work with.
+
+   #+BEGIN_SRC emacs-lisp
+     (org-babel-do-load-languages
+      'org-babel-load-languages
+      '((dot . t)
+        (sh . t)
+        (sql . t)
+        ;; (plantuml . t)
+        (python . t)
+        (restclient . t)))
+   #+END_SRC
