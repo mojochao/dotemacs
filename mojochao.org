@@ -166,6 +166,23 @@
     Now you can use the emacsclient command to instantaneously edit
     your files with the running emacs server.
 
+    I setup emacsclient aliases to facilitate use of the emacs server.
+    Add these to your shell environment configuration if you like.
+
+    If I want to edit with emacsclient using the emacs gui, I use the
+    following.
+
+    #+BEGIN_SRC sh
+      alias eg='emacsclient -n ${@:2}'
+    #+END_SRC
+
+    If I want to edit with emacsclient in the terminal, I use the
+    following.
+
+    #+BEGIN_SRC sh
+      alias et='emacsclient -nw ${@:2}'
+    #+END_SRC
+
 *** File encoding
 
     Default to UTF-8 encoding for files.
@@ -174,7 +191,7 @@
       (prefer-coding-system 'utf-8)
     #+END_SRC
     
-** Completion Support
+*** Completion Support
    
    One common capability is intelligent, contextual completion of things.
    [[http://tuhdo.github.io/helm-intro.html][Helm]] provides a powerful and extensible system for completion, that
@@ -198,7 +215,7 @@
          (helm-mode)))
    #+END_SRC
 
-** Search
+*** Search
 
    [[http://geoff.greer.fm/ag/][Ag]] is a great search tool, and integrates with Emacs.  First, ensure
    it's installed on your mac.
@@ -214,60 +231,7 @@
        :ensure t)
    #+END_SRC
 
-** Git Support
-
-   [[https://magit.vc/][Magit]] rocks.  You definitely need to check it out, so install it.
-
-   #+BEGIN_SRC emacs-lisp
-     (use-package magit
-       :ensure t)
-   #+END_SRC
-
-** Project Support
-
-   I use [[http://batsov.com/projectile/][Projectile]] for project support in Emacs.
-
-   #+BEGIN_SRC emacs-lisp
-     (use-package helm-projectile
-       :ensure t)
-
-     (use-package projectile
-       :ensure t
-       :config
-       (progn
-         (setq projectile-enable-caching t)
-         (setq projectile-completion-system 'helm)
-         (helm-projectile-on)))
-   #+END_SRC
-
-** REST Client
-
-   A rest client comes in handy when testing APIs.  Let's install [[https://github.com/pashky/restclient.el][restclient]].
-
-   #+BEGIN_SRC emacs-lisp
-     (use-package restclient
-       :ensure t)
-   #+END_SRC
-
-   We can also enhance the restclient integration with org docs.
-
-   #+BEGIN_SRC emacs-lisp
-     (use-package ob-restclient
-       :ensure t)
-   #+END_SRC
-
-** SQL Client
-
-   Emacs SQL client support is pretty good right out of the box.
-   Let's disable truncation of lines in sql-interactive mode,
-   however. 
-
-   #+BEGIN_SRC emacs-lisp
-     (add-hook 'sql-interactive-mode-hook (lambda ()
-                                            (toggle-truncate-lines t)))
-   #+END_SRC
-
-** Terminals
+*** Terminals
 
    Emacs provides great support for running ANSI terminals.  What it
    lacks is easy use of multiple terminals in the same session, but we
@@ -287,7 +251,68 @@
        :init (helm-mt/wrap-shells t))
    #+END_SRC
 
-** Graphviz Dot Support
+*** Projects
+*** Git
+
+   [[https://magit.vc/][Magit]] rocks.  You definitely need to check it out, so install it.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package magit
+       :ensure t)
+   #+END_SRC
+
+** OS-Specific Configuration
+*** MacOS Configuration
+
+    Let's help ourselves out here.  I like to use the Emacs.app gui
+    all the time.  I add the following to my shell environment
+    configuration.
+
+    #+BEGIN_SRC sh
+      if [[ "$OSTYPE" =~ "^darwin.*" ]]; then
+          EMACS_APP_BIN=/Applications/Emacs.app/Contents/MacOS/bin
+          export PATH=$EMACS_APP_BIN:$PATH
+          alias ea='open -a Emacs.app ${@:2}'
+      fi
+      alias ev='emacs -q -nw ${@:2}'
+    #+END_SRC
+
+    Sometimes I do want to just start emacs in the terminal with no
+    init file loaded.  I create an 'emacs vanilla' alias for that use.
+
+    #+BEGIN_SRC sh
+      alias ev='emacs -q -nw ${@:2}'
+    #+END_SRC
+
+    Start by using the shell $PATH when using Emacs.app on macOS
+
+    #+BEGIN_SRC emacs-lisp
+     (when (eq system-type 'darwin)
+       (use-package exec-path-from-shell
+         :ensure t)
+       (exec-path-from-shell-initialize)
+       
+       (use-package reveal-in-osx-finder
+         :ensure t)
+       
+       (setq insert-directory-program (executable-find "gls")))
+    #+END_SRC
+
+    Make sure you have installed the GNU coreutils as well.
+
+    #+BEGIN_SRC sh
+     brew install coreutils
+    #+END_SRC
+
+*** Linux Configuration
+
+    I don't really have any linux-specific configuration at the
+    moment, but when I do it will live here.
+
+** Structured Text Editing Tooling
+*** Markdown Support
+*** ReStructured Text Support
+*** Graphviz Dot Support
 
    [[http://graphviz.org/][Graphviz]] is a collection of open source graph visualization tools.
    Descriptions of graphs, specified in text files, can be processed
@@ -308,7 +333,7 @@
        :ensure t)
    #+END_SRC
 
-** PlantUML Support
+*** PlantUML Support
 
    [[http://plantuml.com/][PlantUML]] is an application that generates UML diagrams from textual
    descriptions.  Emacs can be configured to support both the editing
@@ -347,16 +372,7 @@
              (add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode))))))
    #+END_SRC
 
-** Python Development
-
-   [[https://elpy.readthedocs.io/en/latest/][Elpy]] provides nice IDE capabilities for Python development.
-
-   #+BEGIN_SRC emacs-lisp
-     (use-package elpy
-       :ensure t)
-   #+END_SRC
-
-** Notebook Development
+*** Org-Babel Notebooks
 
    To use org files as notebooks, we first need to configure the
    languages we will work with.  These are what I tend to work with.
@@ -372,32 +388,42 @@
         (restclient . t)))
    #+END_SRC
 
-** OS-Specific Configuration
-*** MacOS Configuration
+** Programming Language Tooling
+*** Python Development
 
-    Let's help ourselves out here.  Start by using the shell $PATH
-    when using Emacs.app on macOS
+   [[https://elpy.readthedocs.io/en/latest/][Elpy]] provides nice IDE capabilities for Python development.
 
-    #+BEGIN_SRC emacs-lisp
-     (when (eq system-type 'darwin)
-       (use-package exec-path-from-shell
-         :ensure t)
-       (exec-path-from-shell-initialize)
-       
-       (use-package reveal-in-osx-finder
-         :ensure t)
-       
-       (setq insert-directory-program (executable-find "gls")))
-    #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package elpy
+       :ensure t)
+   #+END_SRC
+   
+** Web Server Tooling
+*** REST Client
 
-    Make sure you have installed the GNU coreutils as well.
+   A rest client comes in handy when testing APIs.  Let's install [[https://github.com/pashky/restclient.el][restclient]].
 
-    #+BEGIN_SRC sh
-     brew install coreutils
-    #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package restclient
+       :ensure t)
+   #+END_SRC
 
-*** Linux Configuration
+   We can also enhance the restclient integration with org docs.
 
-    I don't really have any linux-specific configuration at the
-    moment, but when I do it will live here.
+   #+BEGIN_SRC emacs-lisp
+     (use-package ob-restclient
+       :ensure t)
+   #+END_SRC
+
+** Database Server Tooling
+*** SQL Client
+
+   Emacs SQL client support is pretty good right out of the box.
+   Let's disable truncation of lines in sql-interactive mode,
+   however. 
+
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'sql-interactive-mode-hook (lambda ()
+                                            (toggle-truncate-lines t)))
+   #+END_SRC
 
