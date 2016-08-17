@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-ln -fs $PWD $HOME/.emacs.d
+unlink $HOME/.emacs.d
+ln -s $PWD $HOME/.emacs.d
