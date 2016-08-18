@@ -352,8 +352,12 @@
    the expected name.
 
    #+BEGIN_SRC sh
-     jarfile=$(less $(which plantuml) | grep plantuml | cut -d ' ' -f 5)
-     ln -s $jarfile ~/.emacs.d/plantuml.jar
+     src=$(cat $(which plantuml) | grep plantuml | cut -d ' ' -f 5)
+     dst=~/.emacs.d/plantuml
+     if [[ -s $dst ]]; then
+         unlink $dst
+     fi
+     ln -s $src $dst
    #+END_SRC
 
    #+RESULTS:
